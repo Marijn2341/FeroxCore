@@ -1,0 +1,148 @@
+lobby:
+  world: LobbyPirate
+  x: 194
+  y: 63
+  z: -83
+  yaw: 180
+  pitch: 6
+worlds:
+  Fallen:
+    spawnpoints:
+      blue:
+        x: 119
+        y: 66
+        z: -120
+        yaw: 270
+        pitch: -1
+      red:
+        x: 271
+        y: 66
+        z: -120
+        yaw: 90
+        pitch: 1
+    nexuses:
+      red:
+        Left:
+          x: 249
+          y: 70
+          z: -96
+        Back:
+          x: 310
+          y: 71
+          z: -121
+        Right:
+          x: 249
+          y: 70
+          z: -146
+      blue:
+        Left:
+          x: 141
+          y: 70
+          z: -146
+        Back:
+          x: 80
+          y: 71
+          z: -121
+        Right:
+          x: 141
+          y: 70
+          z: -96
+  Sahara:
+    spawnpoints:
+      blue:
+        x: 65
+        y: 65
+        z: 0
+        yaw: 90
+        pitch: 0
+      red:
+        x: -66
+        y: 65
+        z: 0
+        yaw: 270
+        pitch: -1
+    nexuses:
+      red:
+        Left:
+          x: -50
+          y: 67
+          z: -49
+        Right:
+          x: -50
+          y: 67
+          z: 47
+      blue:
+        Left:
+          x: 48
+          y: 67
+          z: 47
+        Right:
+          x: 48
+          y: 67
+          z: -49
+  Castle:
+    spawnpoints:
+      blue:
+        x: 94
+        y: 64
+        z: 0
+        yaw: 90
+        pitch: -1
+      red:
+        x: -93
+        y: 64
+        z: 0
+        yaw: 270
+        pitch: -1
+    nexuses:
+      red:
+        Left:
+          x: -94
+          y: 74
+          z: -31
+        Right:
+          x: -94
+          y: 74
+          z: 31
+      blue:
+        Left:
+          x: 94
+          y: 74
+          z: 31
+        Right:
+          x: 94
+          y: 74
+          z: -31
+  Sphinx:
+    spawnpoints:
+      blue:
+        x: -33
+        y: 88
+        z: -2
+        yaw: 90
+        pitch: -2
+      red:
+        x: -137
+        y: 88
+        z: -2
+        yaw: 270
+        pitch: -1.9
+    nexuses:
+      red:
+        Left:
+          x: -176
+          y: 97
+          z: -30
+        Right:
+          x: -176
+          y: 97
+          z: 26
+      blue:
+        Left:
+          x: 6
+          y: 97
+          z: 26
+        Right:
+          x: 6
+          y: 97
+          z: -30

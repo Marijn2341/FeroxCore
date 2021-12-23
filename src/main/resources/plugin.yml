@@ -1,0 +1,24 @@
+name: FeroxCore
+version: '${project.version}'
+author: Marijn2341
+main: be.marijn2341.feroxcore.Main
+
+depend:
+  - NametagEdit
+
+softdepend:
+  - Multiverse-Core
+
+commands:
+  test:
+  skipmap:
+  loadmaps:
+  lobby:
+  verify:
+    description: You will receive a code to verify yourself on discord.
+
+permissions:
+  ferox.admin:
+    default: op
+  ferox.lobby.build:
+    default: op
