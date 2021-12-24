@@ -2,9 +2,7 @@ package be.marijn2341.feroxcore.Listeners;
 
 import be.marijn2341.feroxcore.Database.Database;
 import be.marijn2341.feroxcore.Manager.MapManager;
-import be.marijn2341.feroxcore.Manager.TabManager;
 import be.marijn2341.feroxcore.Manager.TeamManager;
-import be.marijn2341.feroxcore.Utils.ItemStacks;
 import be.marijn2341.feroxcore.Utils.Utils;
 import com.nametagedit.plugin.NametagEdit;
 import org.bukkit.entity.Player;
