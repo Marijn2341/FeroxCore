@@ -13,6 +13,8 @@ import com.onarandombox.MultiverseCore.MultiverseCore;
 import com.onarandombox.MultiverseCore.api.MVWorldManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -78,6 +80,7 @@ public class Main extends JavaPlugin {
         getCommand("lobby").setExecutor((CommandExecutor)new LobbyCommand());
         getCommand("test").setExecutor((CommandExecutor)new test());
         getCommand("verify").setExecutor((CommandExecutor)new VerifyCommand());
+        getCommand("startgame").setExecutor((CommandExecutor)new VerifyCommand());
 
         // MAIN INSTANCE
         instance = this;
@@ -112,6 +115,17 @@ public class Main extends JavaPlugin {
         } catch (SQLException | ClassNotFoundException throwables) {
             throwables.printStackTrace();
         }
+
+        // LOAD LOBBY
+        FileConfiguration config = Main.getInstance().getWorldsConfig();
+        World lobby = Bukkit.getWorld(config.getString("lobby.world"));
+        double x = config.getDouble("lobby.x");
+        double y = config.getDouble("lobby.y");
+        double z = config.getDouble("lobby.z");
+        float yaw = (float) config.getDouble("lobby.yaw");
+        float pitch = (float) config.getDouble("lobby.pitch");
+        Location loc = new Location(lobby, x, y, z, yaw, pitch);
+        MapManager.lobby.put("lobby", loc);
     }
 
     @Override

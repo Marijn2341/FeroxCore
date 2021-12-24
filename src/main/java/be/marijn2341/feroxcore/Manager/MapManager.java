@@ -27,6 +27,7 @@ public class MapManager {
     public static boolean GameActive = false;
     public static HashMap<String, String> currentmap = new HashMap<>();
     public static HashMap<String, Location> areas = new HashMap<>();
+    public static HashMap<String, Location> lobby = new HashMap<>();
 
 
     public static void LoadMaps() {
@@ -40,15 +41,7 @@ public class MapManager {
 
         player.setGameMode(GameMode.SURVIVAL);
 
-        FileConfiguration config = Main.getInstance().getWorldsConfig();
-        World lobby = Bukkit.getWorld(config.getString("lobby.world"));
-        double x = config.getDouble("lobby.x");
-        double y = config.getDouble("lobby.y");
-        double z = config.getDouble("lobby.z");
-        float yaw = (float) config.getDouble("lobby.yaw");
-        float pitch = (float) config.getDouble("lobby.pitch");
-        Location loc = new Location(lobby, x, y, z, yaw, pitch);
-        player.teleport(loc);
+        player.teleport(lobby.get("lobby"));
         player.setHealth(20);
         player.setFoodLevel(20);
 
@@ -88,7 +81,7 @@ public class MapManager {
 
             DeathListener.Kills.clear();
             DeathListener.Deaths.clear();
-            
+
             areas.put("redarea1", getSpawnArea1("red"));
             areas.put("redarea2", getSpawnArea2("red"));
             areas.put("bluearea1", getSpawnArea1("blue"));
@@ -362,6 +355,6 @@ public class MapManager {
     }
 
     public static void KickOnReload(Player player) {
-            player.kickPlayer("Reloading server, Rejoin when ready!");
+        player.kickPlayer("Reloading server, Rejoin when ready!");
     }
 }

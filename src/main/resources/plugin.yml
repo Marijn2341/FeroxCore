@@ -11,11 +11,17 @@ softdepend:
 
 commands:
   test:
+    description: No description.
   skipmap:
+    description: You can skip a game with this command.
   loadmaps:
+    description: Load all the maps without restarting.
   lobby:
+    description: The plugin will bring you to the lobby.
   verify:
     description: You will receive a code to verify yourself on discord.
+  startgame:
+    description: You can start a game with this command.
 
 permissions:
   ferox.admin:
