@@ -26,7 +26,6 @@ public class TeamManager {
             TeamBlue.add(player.getUniqueId());
         } else if (team.equalsIgnoreCase("spectator")) {
             Spectator.add(player.getUniqueId());
-            TabManager.SetTabPrefix("others", player);
         }
         ScoreboardManager.GetGameScoreboard(player);
      }
