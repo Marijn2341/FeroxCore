@@ -19,7 +19,7 @@ public class VerifyCommand implements CommandExecutor {
             if (RegistrationDatabase.playerExists(player.getUniqueId())) {
                 player.sendMessage(Utils.color("&cYou already have a verification code, Use the /link confirm <code> command on the discord."));
                 player.sendMessage(Utils.color("&cYour code: &7" + RegistrationDatabase.GetRegistrationCode(player.getUniqueId())));
-                return false;
+                return true;
             } else {
                 String code = Utils.getAlphaNumericString(10);
                 if (RegistrationDatabase.CheckIfCodeExists(code)) {
@@ -30,8 +30,9 @@ public class VerifyCommand implements CommandExecutor {
                 player.sendMessage(Utils.color("&aYou can confirm your verification on discord with the command:"));
                 player.sendMessage(Utils.color("&7/link confirm " + code));
                 player.sendMessage(Utils.color("&a------"));
+                return true;
             }
         }
-        return true;
+        return false;
     }
 }

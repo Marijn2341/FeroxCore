@@ -1,9 +1,7 @@
 package be.marijn2341.feroxcore;
 
 import be.marijn2341.feroxcore.Commands.LobbyCommand;
-import be.marijn2341.feroxcore.Commands.Staff.LoadMapsCommand;
-import be.marijn2341.feroxcore.Commands.Staff.SkipGameCommand;
-import be.marijn2341.feroxcore.Commands.Staff.test;
+import be.marijn2341.feroxcore.Commands.Staff.*;
 import be.marijn2341.feroxcore.Commands.VerifyCommand;
 import be.marijn2341.feroxcore.Database.Database;
 import be.marijn2341.feroxcore.Listeners.*;
@@ -80,7 +78,8 @@ public class Main extends JavaPlugin {
         getCommand("lobby").setExecutor((CommandExecutor)new LobbyCommand());
         getCommand("test").setExecutor((CommandExecutor)new test());
         getCommand("verify").setExecutor((CommandExecutor)new VerifyCommand());
-        getCommand("startgame").setExecutor((CommandExecutor)new VerifyCommand());
+        getCommand("startgame").setExecutor((CommandExecutor)new StartGameCommand());
+        getCommand("setup").setExecutor((CommandExecutor)new SetupCommand());
 
         // MAIN INSTANCE
         instance = this;
@@ -116,16 +115,7 @@ public class Main extends JavaPlugin {
             throwables.printStackTrace();
         }
 
-        // LOAD LOBBY
-        FileConfiguration config = Main.getInstance().getWorldsConfig();
-        World lobby = Bukkit.getWorld(config.getString("lobby.world"));
-        double x = config.getDouble("lobby.x");
-        double y = config.getDouble("lobby.y");
-        double z = config.getDouble("lobby.z");
-        float yaw = (float) config.getDouble("lobby.yaw");
-        float pitch = (float) config.getDouble("lobby.pitch");
-        Location loc = new Location(lobby, x, y, z, yaw, pitch);
-        MapManager.lobby.put("lobby", loc);
+        MapManager.LoadLobby();
     }
 
     @Override

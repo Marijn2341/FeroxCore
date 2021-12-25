@@ -22,9 +22,13 @@ commands:
     description: You will receive a code to verify yourself on discord.
   startgame:
     description: You can start a game with this command.
+  setup:
+    description: Setup a new map or lobby.
 
 permissions:
   ferox.admin:
     default: op
   ferox.lobby.build:
+    default: op
+  ferox.setup:
     default: op
