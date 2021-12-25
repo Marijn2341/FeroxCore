@@ -10,8 +10,6 @@ softdepend:
   - Multiverse-Core
 
 commands:
-  test:
-    description: No description.
   skipmap:
     description: You can skip a game with this command.
   loadmaps:

@@ -76,7 +76,6 @@ public class Main extends JavaPlugin {
         getCommand("loadmaps").setExecutor((CommandExecutor)new LoadMapsCommand());
         getCommand("skipmap").setExecutor((CommandExecutor)new SkipGameCommand());
         getCommand("lobby").setExecutor((CommandExecutor)new LobbyCommand());
-        getCommand("test").setExecutor((CommandExecutor)new test());
         getCommand("verify").setExecutor((CommandExecutor)new VerifyCommand());
         getCommand("startgame").setExecutor((CommandExecutor)new StartGameCommand());
         getCommand("setup").setExecutor((CommandExecutor)new SetupCommand());
