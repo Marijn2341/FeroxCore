@@ -31,10 +31,30 @@ public class MapManager {
 
 
     public static void LoadMaps() {
+        Maps.clear();
+        if (Main.getInstance().getWorldsConfig().get("worlds") == null) {
+            Bukkit.getConsoleSender().sendMessage(ChatColor.DARK_RED + "No maps to load.");
+            return;
+        }
         for (String map : Main.getInstance().getWorldsConfig().getConfigurationSection("worlds").getKeys(false)) {
             Maps.add(map);
         }
         Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + Maps.toString() + " Loaded");
+    }
+
+    public static void LoadLobby() {
+        if (!(lobby.isEmpty())) {
+            lobby.clear();
+        }
+        FileConfiguration config = Main.getInstance().getWorldsConfig();
+        World lobby = Bukkit.getWorld(config.getString("lobby.world"));
+        double x = config.getDouble("lobby.x");
+        double y = config.getDouble("lobby.y");
+        double z = config.getDouble("lobby.z");
+        float yaw = (float) config.getDouble("lobby.yaw");
+        float pitch = (float) config.getDouble("lobby.pitch");
+        Location loc = new Location(lobby, x, y, z, yaw, pitch);
+        MapManager.lobby.put("lobby", loc);
     }
 
     public static void TeleportToSpawn(Player player) {
