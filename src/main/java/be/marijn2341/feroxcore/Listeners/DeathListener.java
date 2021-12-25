@@ -1,6 +1,7 @@
 package be.marijn2341.feroxcore.Listeners;
 
 import be.marijn2341.feroxcore.Main;
+import be.marijn2341.feroxcore.Manager.MapManager;
 import be.marijn2341.feroxcore.Manager.TeamManager;
 import be.marijn2341.feroxcore.Utils.Utils;
 import org.bukkit.Bukkit;
@@ -226,6 +227,11 @@ public class DeathListener implements Listener {
     public void onVoidDamage(EntityDamageByBlockEvent e) {
         if (e.getEntity() instanceof Player && e.getCause() == EntityDamageEvent.DamageCause.VOID) {
             Player damaged = (Player) e.getEntity();
+            if (damaged.getWorld().getName().equals(MapManager.lobby.get("lobby").getWorld().getName())) {
+                MapManager.TeleportToSpawn(damaged);
+                e.setCancelled(true);
+                return;
+            }
             damaged.setHealth(0.5);
         }
     }
