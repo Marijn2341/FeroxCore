@@ -18,6 +18,7 @@ public class TeamManager {
     public static ArrayList<UUID> Losers = new ArrayList();
     public static ArrayList<UUID> ToSpawn = new ArrayList();
     public static ArrayList<UUID> Spectator = new ArrayList<>();
+    public static ArrayList<UUID> Players = new ArrayList<>();
 
     public static void addToTeam(String team, Player player) {
         if (team.equalsIgnoreCase("red")) {
@@ -27,6 +28,8 @@ public class TeamManager {
         } else if (team.equalsIgnoreCase("spectator")) {
             Spectator.add(player.getUniqueId());
         }
+
+        Players.add(player.getUniqueId());
         ScoreboardManager.GetGameScoreboard(player);
      }
 
