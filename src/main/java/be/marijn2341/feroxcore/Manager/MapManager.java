@@ -107,9 +107,9 @@ public class MapManager {
             areas.put("bluearea1", getSpawnArea1("blue"));
             areas.put("bluearea2", getSpawnArea2("blue"));
 
-            Bukkit.broadcastMessage(Utils.color("&9----"));
+            Bukkit.broadcastMessage(Utils.color("&9--- &9&lFerox&f&lMC &9---"));
             Bukkit.broadcastMessage(Utils.color("&9New map started: &f" + newworld + "&9."));
-            Bukkit.broadcastMessage(Utils.color("&9----"));
+            Bukkit.broadcastMessage(Utils.color("&9----------------"));
 
             GameActive = true;
             GameStarted = new Date();
@@ -134,7 +134,7 @@ public class MapManager {
                 TeamManager.Winners.forEach(uuid -> {
                     Player plr = Bukkit.getPlayer(uuid);
                     plr.setGameMode(GameMode.SPECTATOR);
-                    plr.sendTitle(Utils.color("&6&lVictory"), Utils.color("&7Your team won the game."));
+                    Utils.sendTitle(plr, "&6&lVictory", "&7Your team won the game.", 5, 100, 5);
 
                     // ADD WIN TO DATABASE
                     Database.SetWins(plr.getUniqueId(), 1);
@@ -152,7 +152,7 @@ public class MapManager {
                 TeamManager.Losers.forEach(uuid -> {
                     Player plr = Bukkit.getPlayer(uuid);
                     plr.setGameMode(GameMode.SPECTATOR);
-                    plr.sendTitle(Utils.color("&4&lLost"), Utils.color("&7Your team has lost the game."));
+                    Utils.sendTitle(plr, "&c&lLose", "&7Your team lost the game.", 5, 100, 5);
 
                     // ADD LOSE TO DATABASE
                     Database.SetLoses(plr.getUniqueId(), 1);
@@ -180,7 +180,7 @@ public class MapManager {
                 if (!(winner.equalsIgnoreCase("null"))) {
                     TeamManager.Spectator.forEach(uuid -> {
                         Player plr = Bukkit.getPlayer(uuid);
-                        plr.sendTitle(Utils.color("&6" + winner + " &7won the game!"), "");
+                        Utils.sendTitle(plr, "&6" + winner + " &7won the game!", "", 5, 80, 25);
                     });
                 }
 
@@ -190,6 +190,7 @@ public class MapManager {
                 TeamManager.ToSpawn.addAll(TeamManager.Spectator);
                 TeamManager.Losers.clear();
                 TeamManager.Winners.clear();
+                TeamManager.Players.clear();
                 TeamManager.clearTeams();
 
                 NexusManager.RedNexusesLoc.clear();
@@ -230,8 +231,11 @@ public class MapManager {
         }
         if (!(PreviousMap.isEmpty())) {
             Maps.remove(PreviousMap.get(0));
+            if (Maps.isEmpty()) {
+                LoadMaps();
+            }
+            Maps.remove(PreviousMap.get(0));
             String map = Maps.get(new Random().nextInt(Maps.size()));
-            Maps.add(PreviousMap.get(0));
             return map;
         }
         String map = Maps.get(new Random().nextInt(Maps.size()));
