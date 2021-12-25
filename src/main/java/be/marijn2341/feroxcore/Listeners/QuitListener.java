@@ -26,6 +26,10 @@ public class QuitListener implements Listener {
             TeamManager.Spectator.remove(player.getUniqueId());
         }
 
+        if (TeamManager.Players.contains(player.getUniqueId())) {
+            TeamManager.Players.remove(player.getUniqueId());
+        }
+
         if (SetupCommand.setupMode.containsKey(player.getUniqueId())) {
             if (Main.getInstance().getWorldsConfig().contains("worlds." + SetupCommand.setupMode.get(player.getUniqueId()).getName())) {
                 Main.getInstance().getWorldsConfig().set("worlds." + SetupCommand.setupMode.get(player.getUniqueId()).getName(), null);
