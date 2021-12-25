@@ -1,6 +1,7 @@
 package be.marijn2341.feroxcore.Listeners;
 
 import be.marijn2341.feroxcore.Main;
+import be.marijn2341.feroxcore.Manager.MapManager;
 import be.marijn2341.feroxcore.Manager.TeamManager;
 import be.marijn2341.feroxcore.Utils.Utils;
 import org.bukkit.entity.Player;
@@ -65,20 +66,24 @@ public class InventoryClickListener implements Listener {
             if (e.getClickedInventory().getItem(e.getSlot()) == null) return;
         }
 
-        if (player.getWorld().getName().equals(Main.getInstance().getWorldsConfig().getString("lobby.world"))) {
-            e.setCancelled(true);
-            if (e.getCurrentItem() == null) return;
-            if (e.getClickedInventory().getType() == InventoryType.PLAYER) return;
-            if (e.getClickedInventory() == null) return;
-            if (e.getClickedInventory().getItem(e.getSlot()) == null) return;
+        if (player.getWorld().getName().equals(MapManager.lobby.get("lobby").getWorld().getName())) {
+            if (!(player.hasPermission("ferox.lobby.build"))) {
+                e.setCancelled(true);
+                if (e.getCurrentItem() == null) return;
+                if (e.getClickedInventory().getType() == InventoryType.PLAYER) return;
+                if (e.getClickedInventory() == null) return;
+                if (e.getClickedInventory().getItem(e.getSlot()) == null) return;
+            }
         }
     }
 
     @EventHandler
     public void onPlayerDropItem(PlayerDropItemEvent e) {
         Player player = e.getPlayer();
-        if (player.getWorld().getName().equals(Main.getInstance().getWorldsConfig().getString("lobby.world"))) {
-            e.setCancelled(true);
+        if (player.getWorld().getName().equals(MapManager.lobby.get("lobby").getWorld().getName())) {
+            if (!(player.hasPermission("ferox.lobby.build"))) {
+                e.setCancelled(true);
+            }
         }
     }
 }
