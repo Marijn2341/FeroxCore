@@ -24,9 +24,10 @@ public class BlockBreakListener implements Listener {
     public void onBlockBreak(BlockBreakEvent e) {
         Player player = (Player) e.getPlayer();
 
-        if (e.getBlock().getWorld().getName().equals(Main.getInstance().getWorldsConfig().getString("lobby.world"))) {
+        if (e.getBlock().getWorld().getName().equals(MapManager.lobby.get("lobby").getWorld().getName())) {
             if (!(player.hasPermission("ferox.lobby.build"))) {
                 e.setCancelled(true);
+                return;
             }
         }
 

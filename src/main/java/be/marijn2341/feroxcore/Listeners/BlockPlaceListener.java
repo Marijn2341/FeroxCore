@@ -34,7 +34,7 @@ public class BlockPlaceListener implements Listener {
             }
         }
 
-        if (e.getBlock().getWorld().getName().equals(Main.getInstance().getWorldsConfig().getString("lobby.world"))) {
+        if (e.getBlock().getWorld().getName().equals(MapManager.lobby.get("lobby").getWorld().getName())) {
             if (!(player.hasPermission("ferox.lobby.build"))) {
                 e.setCancelled(true);
             }
