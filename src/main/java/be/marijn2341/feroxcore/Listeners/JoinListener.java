@@ -29,7 +29,11 @@ public class JoinListener implements Listener {
 
         // TELEPORT PLAYER TO SPAWN
         MapManager.TeleportToSpawn(player);
-        player.sendMessage(Utils.color("&7You were taken to the spawn."));
+        player.sendMessage(Utils.color("&9--- &9&lFerox&f&lMC &9---"));
+        player.sendMessage(Utils.color("&7Welcome on &9Ferox&fMC&9."));
+        player.sendMessage(Utils.color("&7If you want to know how this game works, &9click here&7. (does not work yet)"));
+        player.sendMessage(Utils.color("&7Enjoy the game!"));
+        player.sendMessage(Utils.color("&9----------------"));
 
         // START A GAME WHEN THERE IS MIN. 1 PLAYER ON THE SERVER
         if (TeamManager.CountOnlinePlayers() == 1) {
