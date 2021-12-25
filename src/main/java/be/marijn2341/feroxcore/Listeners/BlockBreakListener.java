@@ -1,7 +1,6 @@
 package be.marijn2341.feroxcore.Listeners;
 
 import be.marijn2341.feroxcore.Database.Database;
-import be.marijn2341.feroxcore.Main;
 import be.marijn2341.feroxcore.Manager.MapManager;
 import be.marijn2341.feroxcore.Manager.NexusManager;
 import be.marijn2341.feroxcore.Manager.ScoreboardManager;
@@ -9,12 +8,12 @@ import be.marijn2341.feroxcore.Manager.TeamManager;
 import be.marijn2341.feroxcore.Utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 
-import java.util.HashMap;
 import java.util.UUID;
 
 public class BlockBreakListener implements Listener {
@@ -47,9 +46,14 @@ public class BlockBreakListener implements Listener {
                     e.setCancelled(true);
                     e.getBlock().setType(Material.AIR);
                     NexusManager.BlueNexusesLoc.remove(key);
-                    Bukkit.broadcastMessage(Utils.color("&c&l" + player.getName() + " &7has broken a &9&lblue &7nexus. "));
+                    Bukkit.broadcastMessage(Utils.color("&c&l" + player.getName() + " &7has broken a &9&lblue &7nexus."));
                     Database.SetBrokenNexuses(player.getUniqueId(), 1);
                     ScoreboardManager.UpdateScoreboardINGAME();
+
+                    for (UUID uuid : TeamManager.Players) {
+                        Player plr = Bukkit.getPlayer(uuid);
+                        plr.playSound(plr.getLocation(), Sound.AMBIENCE_THUNDER, 2.0f, 1.0f);
+                    }
 
                     if (NexusManager.BlueNexusesLoc.size() == 0) {
                         TeamManager.Winners.addAll(TeamManager.TeamRed);
@@ -71,9 +75,14 @@ public class BlockBreakListener implements Listener {
                     e.setCancelled(true);
                     e.getBlock().setType(Material.AIR);
                     NexusManager.RedNexusesLoc.remove(key);
-                    Bukkit.broadcastMessage(Utils.color("&9&l" + player.getName() + " &7has broken a &c&lred &7nexus. "));
+                    Bukkit.broadcastMessage(Utils.color("&9&l" + player.getName() + " &7has broken a &c&lred &7nexus."));
                     Database.SetBrokenNexuses(player.getUniqueId(), 1);
                     ScoreboardManager.UpdateScoreboardINGAME();
+
+                    for (UUID uuid : TeamManager.Players) {
+                        Player plr = Bukkit.getPlayer(uuid);
+                        plr.playSound(plr.getLocation(), Sound.AMBIENCE_THUNDER, 2.0f, 1.0f);
+                    }
 
                     if (NexusManager.RedNexusesLoc.size() == 0) {
                         TeamManager.Winners.addAll(TeamManager.TeamBlue);
