@@ -16,6 +16,7 @@ public class SkipGameCommand implements CommandExecutor {
             TeamManager.Losers.addAll(TeamManager.TeamBlue);
             TeamManager.Losers.addAll(TeamManager.TeamRed);
             MapManager.EndGame("Null");
+            return true;
         } else {
             Utils.noPermission(player);
         }

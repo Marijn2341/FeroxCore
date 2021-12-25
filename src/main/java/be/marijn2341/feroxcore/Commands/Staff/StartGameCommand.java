@@ -15,6 +15,7 @@ public class StartGameCommand implements CommandExecutor {
             Player player = (Player) sender;
             if (player.hasPermission("ferox.admin")) {
                 MapManager.StartGame();
+                return true;
             } else {
                 Utils.noPermission(player);
             }

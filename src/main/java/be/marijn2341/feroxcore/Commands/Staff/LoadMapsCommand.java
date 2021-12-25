@@ -13,6 +13,8 @@ public class LoadMapsCommand implements CommandExecutor {
         Player player = (Player) sender;
         if (player.hasPermission("ferox.admin")) {
             MapManager.LoadMaps();
+            MapManager.LoadLobby();
+            return true;
         } else {
             Utils.noPermission(player);
         }
