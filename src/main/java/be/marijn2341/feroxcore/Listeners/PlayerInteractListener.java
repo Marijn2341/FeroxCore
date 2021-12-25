@@ -1,5 +1,6 @@
 package be.marijn2341.feroxcore.Listeners;
 
+import be.marijn2341.feroxcore.Commands.Staff.SetupCommand;
 import be.marijn2341.feroxcore.Manager.MapManager;
 import be.marijn2341.feroxcore.Manager.TeamManager;
 import be.marijn2341.feroxcore.Utils.Utils;
@@ -17,6 +18,10 @@ public class PlayerInteractListener implements Listener {
     public void onclick(PlayerInteractEvent e) {
         Player player = e.getPlayer();
         if (e.getAction() == Action.RIGHT_CLICK_AIR && e.getItem().getType() == Material.COMPASS) {
+            if (SetupCommand.setupMode.containsKey(player.getUniqueId())) {
+                player.sendMessage(Utils.color("&cYou are currently in setup mode, exit with /setup exit or /setup save."));
+                return;
+            }
             if (MapManager.GameActive) {
                 if (!(TeamManager.AllreadyInTeam(e.getPlayer()))) {
                     gui.CreateTeamSelectorMenu(player);
