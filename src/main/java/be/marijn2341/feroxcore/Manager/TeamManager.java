@@ -1,5 +1,6 @@
 package be.marijn2341.feroxcore.Manager;
 
+import be.marijn2341.feroxcore.Listeners.ArrowShootListener;
 import be.marijn2341.feroxcore.Listeners.DeathListener;
 import be.marijn2341.feroxcore.Main;
 import be.marijn2341.feroxcore.Utils.Utils;
@@ -97,6 +98,12 @@ public class TeamManager {
         }
         if (!(DeathListener.Kills.containsKey(player.getUniqueId()))) {
             DeathListener.Kills.put(player.getUniqueId(), 0);
+        }
+        if (!(DeathListener.arrowshit.containsKey(player.getUniqueId()))) {
+            DeathListener.arrowshit.put(player.getUniqueId(), 0);
+        }
+        if (!(ArrowShootListener.shot.containsKey(player.getUniqueId()))) {
+            ArrowShootListener.shot.put(player.getUniqueId(), 0);
         }
 
         player.getInventory().clear();

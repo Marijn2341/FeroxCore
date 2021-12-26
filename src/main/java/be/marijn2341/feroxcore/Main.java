@@ -71,6 +71,7 @@ public class Main extends JavaPlugin {
         getServer().getPluginManager().registerEvents((Listener) new FriendlyFire(), (Plugin) this);
         getServer().getPluginManager().registerEvents((Listener) new ChatListener(), (Plugin) this);
         getServer().getPluginManager().registerEvents((Listener) new WeatherListener(), (Plugin) this);
+        getServer().getPluginManager().registerEvents((Listener) new ArrowShootListener(), (Plugin) this);
 
         // REGISTER COMMANDS
         getCommand("loadmaps").setExecutor((CommandExecutor)new LoadMapsCommand());

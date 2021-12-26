@@ -1,5 +1,6 @@
 package be.marijn2341.feroxcore.Database;
 
+import be.marijn2341.feroxcore.Listeners.ArrowShootListener;
 import be.marijn2341.feroxcore.Listeners.DeathListener;
 import be.marijn2341.feroxcore.Main;
 import be.marijn2341.feroxcore.Manager.PlayerManager;
@@ -55,7 +56,7 @@ public class Database {
         public static void UpdateKillsDB(UUID uuid, int kills) {
             try {
                 PreparedStatement ps = Main.getInstance().SQL.getConnection().prepareStatement("UPDATE Stats SET kills = kills + ? WHERE uuid=?");
-                ps.setInt(1, DeathListener.Kills.get(uuid));
+                ps.setInt(1, kills);
                 ps.setString(2, uuid.toString());
                 ps.executeUpdate();
             } catch (SQLException e) {
@@ -77,10 +78,10 @@ public class Database {
             return 0;
         }
 
-    public static void UpdateDeathsDB(UUID uuid, int kills) {
+    public static void UpdateDeathsDB(UUID uuid, int deaths) {
         try {
             PreparedStatement ps = Main.getInstance().SQL.getConnection().prepareStatement("UPDATE Stats SET deaths = deaths + ? WHERE uuid=?");
-            ps.setInt(1, DeathListener.Deaths.get(uuid));
+            ps.setInt(1, deaths);
             ps.setString(2, uuid.toString());
             ps.executeUpdate();
         } catch (SQLException e) {
@@ -211,6 +212,28 @@ public class Database {
                 e.printStackTrace();
             }
     }
+
+    public static void UpdateArrowsShotDB(UUID uuid, int shot) {
+        try {
+            PreparedStatement ps = Main.getInstance().SQL.getConnection().prepareStatement("UPDATE Stats SET arrowsshot = arrowsshot + ? WHERE uuid=?");
+            ps.setInt(1, shot);
+            ps.setString(2, uuid.toString());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    public static void UpdateArrowsHitDB(UUID uuid, int hit) {
+        try {
+            PreparedStatement ps = Main.getInstance().SQL.getConnection().prepareStatement("UPDATE Stats SET arrowshit = arrowshit + ? WHERE uuid=?");
+            ps.setInt(1, hit);
+            ps.setString(2, uuid.toString());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 
 
 }

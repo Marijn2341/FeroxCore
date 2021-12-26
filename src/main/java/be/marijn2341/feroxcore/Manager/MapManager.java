@@ -1,6 +1,7 @@
 package be.marijn2341.feroxcore.Manager;
 
 import be.marijn2341.feroxcore.Database.Database;
+import be.marijn2341.feroxcore.Listeners.ArrowShootListener;
 import be.marijn2341.feroxcore.Listeners.BlockPlaceListener;
 import be.marijn2341.feroxcore.Listeners.DeathListener;
 import be.marijn2341.feroxcore.Main;
@@ -101,6 +102,8 @@ public class MapManager {
 
             DeathListener.Kills.clear();
             DeathListener.Deaths.clear();
+            DeathListener.arrowshit.clear();
+            ArrowShootListener.shot.clear();
 
             areas.put("redarea1", getSpawnArea1("red"));
             areas.put("redarea2", getSpawnArea2("red"));
@@ -137,7 +140,8 @@ public class MapManager {
                     Utils.sendTitle(plr, "&6&lVictory", "&7Your team won the game.", 5, 100, 5);
 
                     // ADD WIN TO DATABASE
-                    Database.SetWins(plr.getUniqueId(), 1);
+                    Database.SetWins(uuid, 1);
+                    Statistics.updateStats(uuid);
 
                     // SEND STATS TO PLAYERS
                     plr.sendMessage(Utils.color("&8-----"));
@@ -146,6 +150,8 @@ public class MapManager {
                     plr.sendMessage(Utils.color("&7Matchtime: &f" + matchtijd));
                     plr.sendMessage(Utils.color("&7Your kills: &f" + DeathListener.Kills.get(plr.getUniqueId())));
                     plr.sendMessage(Utils.color("&7Your deaths: &f" + DeathListener.Deaths.get(plr.getUniqueId())));
+                    plr.sendMessage(Utils.color("&7Arrows shot: &f" + ArrowShootListener.shot.get(plr.getUniqueId())));
+                    plr.sendMessage(Utils.color("&7Arrows hit: &f" + DeathListener.arrowshit.get(plr.getUniqueId())));
                     plr.sendMessage(Utils.color("&8-----"));
                 });
 
@@ -155,7 +161,8 @@ public class MapManager {
                     Utils.sendTitle(plr, "&c&lLose", "&7Your team lost the game.", 5, 100, 5);
 
                     // ADD LOSE TO DATABASE
-                    Database.SetLoses(plr.getUniqueId(), 1);
+                    Database.SetLoses(uuid, 1);
+                    Statistics.updateStats(uuid);
 
                     // SEND STATS TO PLAYERS
                     plr.sendMessage(Utils.color("&8-----"));
@@ -163,19 +170,11 @@ public class MapManager {
                     plr.sendMessage(Utils.color("&7Total blocks broken (global): &f" + BlockPlaceListener.blocks.get("broken")));
                     plr.sendMessage(Utils.color("&7Matchtime: &f" + matchtijd));
                     plr.sendMessage(Utils.color("&7Your kills: &f" + DeathListener.Kills.get(plr.getUniqueId())));
-                    plr.sendMessage(Utils.color("&7Your deaths: &f " + DeathListener.Deaths.get(plr.getUniqueId())));
+                    plr.sendMessage(Utils.color("&7Your deaths: &f" + DeathListener.Deaths.get(plr.getUniqueId())));
+                    plr.sendMessage(Utils.color("&7Arrows shot: &f" + ArrowShootListener.shot.get(plr.getUniqueId())));
+                    plr.sendMessage(Utils.color("&7Arrows hit: &f" + DeathListener.arrowshit.get(plr.getUniqueId())));
                     plr.sendMessage(Utils.color("&8-----"));
                 });
-
-                for (UUID uuid : DeathListener.Kills.keySet()) {
-                    int kills = DeathListener.Kills.get(uuid);
-                    Database.UpdateKillsDB(uuid, kills);
-                }
-
-                for (UUID uuid : DeathListener.Deaths.keySet()) {
-                    int deaths = DeathListener.Deaths.get(uuid);
-                    Database.UpdateDeathsDB(uuid, deaths);
-                }
 
                 if (!(winner.equalsIgnoreCase("null"))) {
                     TeamManager.Spectator.forEach(uuid -> {
@@ -258,7 +257,7 @@ public class MapManager {
         ItemStack bow = new ItemStack(Material.BOW);
         ItemStack pickaxe = new ItemStack(Material.DIAMOND_PICKAXE);
         ItemStack axe = new ItemStack(Material.STONE_AXE);
-        ItemStack arrows = new ItemStack(Material.ARROW, 32);
+        ItemStack arrows = new ItemStack(Material.ARROW, 16);
         ItemStack logs = new ItemStack(Material.LOG, 64);
         ItemStack glass = new ItemStack(Material.GLASS, 64);
         ItemStack gapple = new ItemStack(Material.GOLDEN_APPLE);
@@ -270,11 +269,11 @@ public class MapManager {
         inv.setItem(1, bow);
         inv.setItem(2, pickaxe);
         inv.setItem(3, axe);
-        inv.setItem(4, arrows);
-        inv.setItem(5, logs);
-        inv.setItem(6, glass);
-        inv.setItem(7, gapple);
-        inv.setItem(8, steak);
+        inv.setItem(27, arrows);
+        inv.setItem(4, logs);
+        inv.setItem(5, glass);
+        inv.setItem(6, gapple);
+        inv.setItem(7, steak);
 
         player.updateInventory();
     }

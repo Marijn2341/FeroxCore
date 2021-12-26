@@ -7,10 +7,7 @@ import be.marijn2341.feroxcore.Utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
@@ -30,6 +27,7 @@ public class DeathListener implements Listener {
     public static HashMap<UUID, Integer> Kills = new HashMap<>();
     public static HashMap<Player, BukkitTask> Queue = new HashMap<>();
     public static HashMap<Player, Player> LastDamager = new HashMap<>();
+    public static HashMap<UUID, Integer> arrowshit = new HashMap<>();
 
     @EventHandler
     public void ondeath(PlayerDeathEvent e) {
@@ -82,6 +80,8 @@ public class DeathListener implements Listener {
             return;
         }
 
+        Deaths.put(deathplayer.getUniqueId(), Deaths.get(deathplayer.getUniqueId()) + 1);
+
 
         // ------------------------------
         // CHECK IF PLAYER DIED BY A CACTUS
@@ -95,8 +95,6 @@ public class DeathListener implements Listener {
                     e.setDeathMessage(Utils.color("&" + TeamManager.GetTeamColor(deathplayer) +
                             deathplayer.getName() + " &7got knocked into a cactus by &" + TeamManager.GetTeamColor(killer) + killer.getName() +
                             "&7."));
-                    // ADD DEATH TO PLAYER
-                    Deaths.put(deathplayer.getUniqueId(), Deaths.get(deathplayer.getUniqueId()) + 1);
                     // ADD KILL TO KILLER
                     Kills.put(killer.getUniqueId(), Kills.get(killer.getUniqueId()) + 1);
                     // REMOVE PLAYER FROM HASHMAP
@@ -105,7 +103,6 @@ public class DeathListener implements Listener {
                 } else {
                     e.setDeathMessage(Utils.color("&" + TeamManager.GetTeamColor(deathplayer) +
                             deathplayer.getName() + " &7got rekt by a cactus!"));
-                    Deaths.put(deathplayer.getUniqueId(), Deaths.get(deathplayer.getUniqueId()) + 1);
                     return;
                 }
             }
@@ -122,8 +119,6 @@ public class DeathListener implements Listener {
                     e.setDeathMessage(Utils.color("&" + TeamManager.GetTeamColor(deathplayer) +
                             deathplayer.getName() + " &7got knocked to the ground by &" + TeamManager.GetTeamColor(killer) + killer.getName() +
                             "&7."));
-                    // ADD DEATH TO PLAYER
-                    Deaths.put(deathplayer.getUniqueId(), Deaths.get(deathplayer.getUniqueId()) + 1);
                     // ADD KILL TO KILLER
                     Kills.put(killer.getUniqueId(), Kills.get(killer.getUniqueId()) + 1);
                     // REMOVE PLAYER FROM HASHMAP
@@ -132,7 +127,6 @@ public class DeathListener implements Listener {
                 } else {
                     e.setDeathMessage(Utils.color("&" + TeamManager.GetTeamColor(deathplayer) +
                             deathplayer.getName() + " &7wanted to kiss the ground!"));
-                    Deaths.put(deathplayer.getUniqueId(), Deaths.get(deathplayer.getUniqueId()) + 1);
                     return;
                 }
             }
@@ -150,8 +144,6 @@ public class DeathListener implements Listener {
                         e.setDeathMessage(Utils.color("&" + TeamManager.GetTeamColor(deathplayer) +
                                 deathplayer.getName() + " &7got knocked into the void by &" + TeamManager.GetTeamColor(killer) + killer.getName() +
                                 "&7."));
-                        // ADD DEATH TO PLAYER
-                        Deaths.put(deathplayer.getUniqueId(), Deaths.get(deathplayer.getUniqueId()) + 1);
                         // ADD KILL TO KILLER
                         Kills.put(killer.getUniqueId(), Kills.get(killer.getUniqueId()) + 1);
                         // REMOVE PLAYER FROM HASHMAP
@@ -159,8 +151,6 @@ public class DeathListener implements Listener {
                         return;
                     } else {
                         e.setDeathMessage(Utils.color("&" + TeamManager.GetTeamColor(deathplayer) + deathplayer.getName() + " &7died in the void."));
-                        // ADD DEATH TO PLAYER
-                        Deaths.put(deathplayer.getUniqueId(), Deaths.get(deathplayer.getUniqueId()) + 1);
                         return;
                     }
                 }
@@ -170,6 +160,22 @@ public class DeathListener implements Listener {
             // KILLER KILLS PLAYER (BOW AND ARROW)
             // ------------------------------
 
+            if (e.getEntity().getLastDamageCause() instanceof EntityDamageByEntityEvent) {
+                EntityDamageByEntityEvent cause = (EntityDamageByEntityEvent) e.getEntity().getLastDamageCause();
+                if (cause.getCause() == EntityDamageEvent.DamageCause.PROJECTILE) {
+                    if (cause.getDamager() instanceof Arrow) {
+                        Arrow arrow = (Arrow) cause.getDamager();
+                        if (arrow.getShooter() instanceof Player) {
+                            Player shooter = (Player) arrow.getShooter();
+                            e.setDeathMessage(Utils.color("&" + TeamManager.GetTeamColor(deathplayer) + deathplayer.getName() + " &7got shot by &" +
+                                    TeamManager.GetTeamColor(shooter) + shooter.getName() + "&7."));
+                            Kills.put(shooter.getUniqueId(), Kills.get(shooter.getUniqueId()) + 1);
+                            return;
+                        }
+                    }
+                }
+            }
+
             // ------------------------------
             // KILLER KILLS PLAYER (NORMAL)
             // ------------------------------
@@ -178,8 +184,6 @@ public class DeathListener implements Listener {
                 Player killer = deathplayer.getKiller();
                 if (TeamManager.TeamBlue.contains(killer.getUniqueId()) || TeamManager.TeamRed.contains(killer.getUniqueId())) {
                     e.setDeathMessage(Utils.color("&" + TeamManager.GetTeamColor(deathplayer) + deathplayer.getName() + " &7got killed by &" + TeamManager.GetTeamColor(killer) + killer.getName() + "&7."));
-                    // ADD DEATH TO PLAYER
-                    Deaths.put(deathplayer.getUniqueId(), Deaths.get(deathplayer.getUniqueId()) + 1);
                     // ADD KILL TO KILLER
                     Kills.put(killer.getUniqueId(), Kills.get(killer.getUniqueId()) + 1);
 
@@ -198,29 +202,45 @@ public class DeathListener implements Listener {
 
     @EventHandler
     public void onDamage(EntityDamageByEntityEvent e) {
-        if (e.getEntity() instanceof Player && e.getDamager() instanceof Player) {
-            Player hitter = (Player) e.getDamager();
+        if (e.getEntity() instanceof Player && (e.getDamager() instanceof Player || e.getDamager() instanceof Arrow)) {
             Player hitted = (Player) e.getEntity();
 
-            if (TeamManager.AllreadyInTeam(hitter) && TeamManager.AllreadyInTeam(hitted)) {
-                if (TeamManager.TeamRed.contains(hitter.getUniqueId()) == TeamManager.TeamRed.contains(hitted.getUniqueId())) {
-                    return;
-                }
-                if (TeamManager.TeamBlue.contains(hitter.getUniqueId()) == TeamManager.TeamBlue.contains(hitted.getUniqueId())) {
-                    return;
-                }
-                LastDamager.put(hitted, hitter);
-                if(Queue.get(hitted) != null){
-                    Queue.get(hitted).cancel();
-                }
-                BukkitTask br = new BukkitRunnable() {
-                    public void run() {
-                        LastDamager.remove(hitted);
+            if (e.getDamager() instanceof Arrow) {
+                Arrow arrow = (Arrow) e.getDamager();
+                Player hitter = (Player) arrow.getShooter();
+                if (TeamManager.AllreadyInTeam(hitter) && TeamManager.AllreadyInTeam(hitted)) {
+                    if (TeamManager.TeamRed.contains(hitter.getUniqueId()) == TeamManager.TeamRed.contains(hitted.getUniqueId())) {
+                        return;
                     }
-                }.runTaskLater(Main.getInstance(), 200);
+                    if (TeamManager.TeamBlue.contains(hitter.getUniqueId()) == TeamManager.TeamBlue.contains(hitted.getUniqueId())) {
+                        return;
+                    }
+                    arrowshit.put(hitter.getUniqueId(), arrowshit.get(hitter.getUniqueId()) + 1);
+                    LastDamager.put(hitted, hitter);
+                }
+            } else {
+                Player hitter = (Player) e.getDamager();
+                if (TeamManager.AllreadyInTeam(hitter) && TeamManager.AllreadyInTeam(hitted)) {
+                    if (TeamManager.TeamRed.contains(hitter.getUniqueId()) == TeamManager.TeamRed.contains(hitted.getUniqueId())) {
+                        return;
+                    }
+                    if (TeamManager.TeamBlue.contains(hitter.getUniqueId()) == TeamManager.TeamBlue.contains(hitted.getUniqueId())) {
+                        return;
+                    }
+                    LastDamager.put(hitted, hitter);
+                }
+            }
+
+
+            if(Queue.get(hitted) != null){
+                Queue.get(hitted).cancel();
+            }
+            BukkitTask br = new BukkitRunnable() {
+                public void run() {LastDamager.remove(hitted);
+                }
+            }.runTaskLater(Main.getInstance(), 200);
                 Queue.put(hitted, br);
             }
-        }
     }
 
     @EventHandler
