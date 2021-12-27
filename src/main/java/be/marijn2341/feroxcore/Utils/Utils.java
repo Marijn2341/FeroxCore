@@ -46,4 +46,8 @@ public class Utils {
         connection.sendPacket(subtitle);
         connection.sendPacket(length);
     }
+
+    public static void KickOnReload(Player player) {
+        player.kickPlayer("Reloading server, Rejoin when ready!");
+    }
 }

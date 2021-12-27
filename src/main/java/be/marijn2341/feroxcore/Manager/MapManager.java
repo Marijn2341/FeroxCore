@@ -408,8 +408,4 @@ public class MapManager {
         Location area2 = new Location(game, area2x, area2y, area2z);
         return area2;
     }
-
-    public static void KickOnReload(Player player) {
-        player.kickPlayer("Reloading server, Rejoin when ready!");
-    }
 }

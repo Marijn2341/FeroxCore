@@ -6,6 +6,7 @@ import be.marijn2341.feroxcore.Commands.VerifyCommand;
 import be.marijn2341.feroxcore.Database.Database;
 import be.marijn2341.feroxcore.Listeners.*;
 import be.marijn2341.feroxcore.Manager.MapManager;
+import be.marijn2341.feroxcore.Utils.Utils;
 import com.onarandombox.MultiverseCore.MultiverseCore;
 import com.onarandombox.MultiverseCore.api.MVWorldManager;
 import org.bukkit.Bukkit;
@@ -78,7 +79,7 @@ public class Main extends JavaPlugin {
             MapManager.PreviousMap.clear();
             MapManager.StartGame();
             for (Player plr : Bukkit.getOnlinePlayers()) {
-                MapManager.KickOnReload(plr);
+                Utils.KickOnReload(plr);
             }
         }
 
