@@ -17,9 +17,9 @@ public class TeamManager {
     public static ArrayList<UUID> TeamBlue = new ArrayList();
     public static ArrayList<UUID> Winners = new ArrayList();
     public static ArrayList<UUID> Losers = new ArrayList();
-    public static ArrayList<UUID> ToSpawn = new ArrayList();
     public static ArrayList<UUID> Spectator = new ArrayList<>();
     public static ArrayList<UUID> Players = new ArrayList<>();
+    public static HashMap<String, Location> Spawnpoints = new HashMap<>();
 
     public static void addToTeam(String team, Player player) {
         if (team.equalsIgnoreCase("red")) {
@@ -77,21 +77,8 @@ public class TeamManager {
     }
 
     public static void processToTeam(String team, Player player) {
-
-        FileConfiguration config = Main.getInstance().getWorldsConfig();
-        World lobby = Bukkit.getWorld(MapManager.currentmap.get("current") + "_activegame");
-        double x = config.getDouble("worlds." + MapManager.currentmap.get("current") + ".spawnpoints." +
-                team + ".x");
-        double y = config.getDouble("worlds." + MapManager.currentmap.get("current") + ".spawnpoints." +
-                team + ".y");
-        double z = config.getDouble("worlds." + MapManager.currentmap.get("current") + ".spawnpoints." +
-                team + ".z");
-        float yaw = (float) config.getDouble("worlds." + MapManager.currentmap.get("current") + ".spawnpoints." +
-                team + ".yaw");
-        float pitch = (float) config.getDouble("worlds." + MapManager.currentmap.get("current") + ".spawnpoints." +
-                team + ".pitch");
-        Location loc = new Location(lobby, x, y, z, yaw, pitch);
-        player.teleport(loc);
+        // TELEPORT TO TEAM SPAWN
+        player.teleport(Spawnpoints.get(team));
 
         if (!(DeathListener.Deaths.containsKey(player.getUniqueId()))) {
             DeathListener.Deaths.put(player.getUniqueId(), 0);
@@ -147,22 +134,8 @@ public class TeamManager {
     }
 
     public static void SetAsSpectator(Player player) {
-
-        FileConfiguration config = Main.getInstance().getWorldsConfig();
-        World lobby = Bukkit.getWorld(MapManager.currentmap.get("current") + "_activegame");
-        double x = config.getDouble("worlds." + MapManager.currentmap.get("current") + ".spawnpoints.red.x");
-        double y = config.getDouble("worlds." + MapManager.currentmap.get("current") + ".spawnpoints.red.y");
-        double z = config.getDouble("worlds." + MapManager.currentmap.get("current") + ".spawnpoints.red.z");
-        double yaw = config.getDouble("worlds." + MapManager.currentmap.get("current") + ".spawnpoints.red.yaw");
-        double pitch = config.getDouble("worlds." + MapManager.currentmap.get("current") + ".spawnpoints.red.pitch");
-        Location red = new Location(lobby, x, y, z, (float) yaw, (float) pitch);
-
-        double x2 = config.getDouble("worlds." + MapManager.currentmap.get("current") + ".spawnpoints.blue.x");
-        double y2 = config.getDouble("worlds." + MapManager.currentmap.get("current") + ".spawnpoints.blue.y");
-        double z2 = config.getDouble("worlds." + MapManager.currentmap.get("current") + ".spawnpoints.blue.z");
-        double yaw2 = config.getDouble("worlds." + MapManager.currentmap.get("current") + ".spawnpoints.blue.yaw");
-        double pitch2 = config.getDouble("worlds." + MapManager.currentmap.get("current") + ".spawnpoints.blue.pitch");
-        Location blue = new Location(lobby, x2, y2, z2, (float) yaw2, (float) pitch2);
+        Location red = Spawnpoints.get("red");
+        Location blue = Spawnpoints.get("blue");
 
         List<Location> spawn = Arrays.asList(red, blue);
         Random rand = new Random();

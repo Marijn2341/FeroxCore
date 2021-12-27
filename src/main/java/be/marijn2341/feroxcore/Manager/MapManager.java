@@ -5,6 +5,7 @@ import be.marijn2341.feroxcore.Listeners.ArrowShootListener;
 import be.marijn2341.feroxcore.Listeners.BlockPlaceListener;
 import be.marijn2341.feroxcore.Listeners.DeathListener;
 import be.marijn2341.feroxcore.Main;
+import be.marijn2341.feroxcore.Manager.Statistics.GameStatistics;
 import be.marijn2341.feroxcore.Manager.Statistics.PlayerStatistics;
 import be.marijn2341.feroxcore.Utils.ItemStacks;
 import be.marijn2341.feroxcore.Utils.Utils;
@@ -25,7 +26,7 @@ public class MapManager {
 
     public static ArrayList<String> Maps = new ArrayList<>();
     public static ArrayList<String> PreviousMap = new ArrayList<>();
-    private static Date GameStarted = null;
+    private static Date GameStartedAt = null;
     public static boolean GameActive = false;
     public static HashMap<String, String> currentmap = new HashMap<>();
     public static HashMap<String, Location> areas = new HashMap<>();
@@ -49,24 +50,9 @@ public class MapManager {
         Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + Maps.toString() + " Loaded");
     }
 
-    public static void LoadLobby() {
-        if (!(lobby.isEmpty())) {
-            lobby.clear();
-        }
-        FileConfiguration config = Main.getInstance().getWorldsConfig();
-        World lobby = Bukkit.getWorld(config.getString("lobby.world"));
-        double x = config.getDouble("lobby.x");
-        double y = config.getDouble("lobby.y");
-        double z = config.getDouble("lobby.z");
-        float yaw = (float) config.getDouble("lobby.yaw");
-        float pitch = (float) config.getDouble("lobby.pitch");
-        Location loc = new Location(lobby, x, y, z, yaw, pitch);
-        MapManager.lobby.put("lobby", loc);
-    }
-
     public static void TeleportToSpawn(Player player) {
 
-        player.setGameMode(GameMode.SURVIVAL);
+        player.setGameMode(GameMode.ADVENTURE);
 
         player.teleport(lobby.get("lobby"));
         player.setHealth(20);
@@ -102,14 +88,17 @@ public class MapManager {
             Main.wm.getMVWorld(newworld + "_activegame").setAlias(newworld + "_activegame");
             currentmap.put("current", newworld);
 
-            BlockPlaceListener.blocks.put("placed", 0);
-            BlockPlaceListener.blocks.put("broken", 0);
+            loadSpawnPoints("red");
+            loadSpawnPoints("blue");
+
             NexusManager.CountNexuses();
 
             DeathListener.Kills.clear();
             DeathListener.Deaths.clear();
             DeathListener.arrowshit.clear();
             ArrowShootListener.shot.clear();
+            BlockPlaceListener.blocks.put("placed", 0);
+            BlockPlaceListener.blocks.put("broken", 0);
 
             kills = 0;
             deaths = 0;
@@ -126,7 +115,7 @@ public class MapManager {
             Bukkit.broadcastMessage(Utils.color("&9----------------"));
 
             GameActive = true;
-            GameStarted = new Date();
+            GameStartedAt = new Date();
         }
     }
 
@@ -160,21 +149,13 @@ public class MapManager {
                     arrowshit = arrowshit + DeathListener.arrowshit.get(plr.getUniqueId());
 
                     // SEND STATS TO PLAYERS
-                    plr.sendMessage(Utils.color("&8-----"));
-                    plr.sendMessage(Utils.color("&7Total blocks placed (global): &f" + BlockPlaceListener.blocks.get("placed")));
-                    plr.sendMessage(Utils.color("&7Total blocks broken (global): &f" + BlockPlaceListener.blocks.get("broken")));
-                    plr.sendMessage(Utils.color("&7Matchtime: &f" + matchtijd));
-                    plr.sendMessage(Utils.color("&7Your kills: &f" + DeathListener.Kills.get(plr.getUniqueId())));
-                    plr.sendMessage(Utils.color("&7Your deaths: &f" + DeathListener.Deaths.get(plr.getUniqueId())));
-                    plr.sendMessage(Utils.color("&7Arrows shot: &f" + ArrowShootListener.shot.get(plr.getUniqueId())));
-                    plr.sendMessage(Utils.color("&7Arrows hit: &f" + DeathListener.arrowshit.get(plr.getUniqueId())));
-                    plr.sendMessage(Utils.color("&8-----"));
+                    GameStatistics.sendGameStats(plr, matchtijd);
                 });
 
                 TeamManager.Losers.forEach(uuid -> {
                     Player plr = Bukkit.getPlayer(uuid);
                     plr.setGameMode(GameMode.SPECTATOR);
-                    Utils.sendTitle(plr, "&c&lLose", "&7Your team lost the game.", 5, 100, 5);
+                    Utils.sendTitle(plr, "&c&lLost", "&7Your team lost the game.", 5, 100, 5);
 
                     // ADD LOSE TO DATABASE
                     Database.SetLoses(uuid, 1);
@@ -187,15 +168,7 @@ public class MapManager {
                     arrowshit = arrowshit + DeathListener.arrowshit.get(plr.getUniqueId());
 
                     // SEND STATS TO PLAYERS
-                    plr.sendMessage(Utils.color("&8-----"));
-                    plr.sendMessage(Utils.color("&7Total blocks placed (global): &f" + BlockPlaceListener.blocks.get("placed")));
-                    plr.sendMessage(Utils.color("&7Total blocks broken (global): &f" + BlockPlaceListener.blocks.get("broken")));
-                    plr.sendMessage(Utils.color("&7Matchtime: &f" + matchtijd));
-                    plr.sendMessage(Utils.color("&7Your kills: &f" + DeathListener.Kills.get(plr.getUniqueId())));
-                    plr.sendMessage(Utils.color("&7Your deaths: &f" + DeathListener.Deaths.get(plr.getUniqueId())));
-                    plr.sendMessage(Utils.color("&7Arrows shot: &f" + ArrowShootListener.shot.get(plr.getUniqueId())));
-                    plr.sendMessage(Utils.color("&7Arrows hit: &f" + DeathListener.arrowshit.get(plr.getUniqueId())));
-                    plr.sendMessage(Utils.color("&8-----"));
+                    GameStatistics.sendGameStats(plr, matchtijd);
                 });
 
                 if (!(winner.equalsIgnoreCase("null"))) {
@@ -211,25 +184,21 @@ public class MapManager {
 
                 GameActive = false;
 
-                TeamManager.ToSpawn.addAll(TeamManager.Losers);
-                TeamManager.ToSpawn.addAll(TeamManager.Winners);
-                TeamManager.ToSpawn.addAll(TeamManager.Spectator);
                 TeamManager.Losers.clear();
                 TeamManager.Winners.clear();
-                TeamManager.Players.clear();
                 TeamManager.clearTeams();
-
                 NexusManager.RedNexusesLoc.clear();
                 NexusManager.BlueNexusesLoc.clear();
                 NexusManager.RedNexusesLocTOTAL.clear();
                 NexusManager.BlueNexusesLocTOTAL.clear();
+                TeamManager.Spawnpoints.clear();
 
-                GameStarted = null;
+                GameStartedAt = null;
 
                 new BukkitRunnable() {
                     @Override
                     public void run() {
-                        for (UUID uuid : TeamManager.ToSpawn) {
+                        for (UUID uuid : TeamManager.Players) {
                             Player plr = Bukkit.getPlayer(uuid);
                             TeleportToSpawn(plr);
                             PreviousMap.clear();
@@ -241,7 +210,7 @@ public class MapManager {
                                 @Override
                                 public void run() {
                                     StartGame();
-                                    TeamManager.ToSpawn.clear();
+                                    TeamManager.Players.clear();
                                 }
                             }.runTaskLater(Main.getInstance(), 40);
                         }
@@ -270,7 +239,7 @@ public class MapManager {
     }
 
     public static String GetMatchTime() {
-        long milliseconds = new Date().getTime() - GameStarted.getTime();
+        long milliseconds = new Date().getTime() - GameStartedAt.getTime();
         long seconds = TimeUnit.MILLISECONDS.toSeconds(milliseconds);
         long hours = TimeUnit.SECONDS.toHours(seconds);
         long minutes = TimeUnit.SECONDS.toMinutes(seconds) - (hours * 60);
@@ -279,7 +248,7 @@ public class MapManager {
     }
 
     public static long GetMatchTimeMi() {
-        long milliseconds = new Date().getTime() - GameStarted.getTime();
+        long milliseconds = new Date().getTime() - GameStartedAt.getTime();
         return milliseconds;
     }
 
@@ -293,7 +262,7 @@ public class MapManager {
         ItemStack logs = new ItemStack(Material.LOG, 64);
         ItemStack glass = new ItemStack(Material.GLASS, 64);
         ItemStack gapple = new ItemStack(Material.GOLDEN_APPLE);
-        ItemStack steak = new ItemStack(Material.COOKED_BEEF, 64);
+        ItemStack steak = new ItemStack(Material.COOKED_BEEF, 16);
 
         pickaxe.addEnchantment(Enchantment.DIG_SPEED, 1);
 
@@ -329,6 +298,25 @@ public class MapManager {
         player.getInventory().setBoots(boots);
 
         player.updateInventory();
+    }
+
+    // ONLY LOADS WHEN A MAP STARTS.
+    public static void loadSpawnPoints(String team) {
+        FileConfiguration config = Main.getInstance().getWorldsConfig();
+        World world = Bukkit.getWorld(MapManager.currentmap.get("current") + "_activegame");
+        double x = config.getDouble("worlds." + MapManager.currentmap.get("current") + ".spawnpoints." +
+                team + ".x");
+        double y = config.getDouble("worlds." + MapManager.currentmap.get("current") + ".spawnpoints." +
+                team + ".y");
+        double z = config.getDouble("worlds." + MapManager.currentmap.get("current") + ".spawnpoints." +
+                team + ".z");
+        float yaw = (float) config.getDouble("worlds." + MapManager.currentmap.get("current") + ".spawnpoints." +
+                team + ".yaw");
+        float pitch = (float) config.getDouble("worlds." + MapManager.currentmap.get("current") + ".spawnpoints." +
+                team + ".pitch");
+        Location loc = new Location(world, x, y, z, yaw, pitch);
+
+        TeamManager.Spawnpoints.put(team, loc);
     }
 
     // LETS TRUST LUC CODE ;)
@@ -407,5 +395,20 @@ public class MapManager {
 
         Location area2 = new Location(game, area2x, area2y, area2z);
         return area2;
+    }
+
+    public static void LoadLobby() {
+        if (!(lobby.isEmpty())) {
+            lobby.clear();
+        }
+        FileConfiguration config = Main.getInstance().getWorldsConfig();
+        World lobby = Bukkit.getWorld(config.getString("lobby.world"));
+        double x = config.getDouble("lobby.x");
+        double y = config.getDouble("lobby.y");
+        double z = config.getDouble("lobby.z");
+        float yaw = (float) config.getDouble("lobby.yaw");
+        float pitch = (float) config.getDouble("lobby.pitch");
+        Location loc = new Location(lobby, x, y, z, yaw, pitch);
+        MapManager.lobby.put("lobby", loc);
     }
 }
