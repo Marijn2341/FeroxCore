@@ -4,6 +4,8 @@ import be.marijn2341.feroxcore.Listeners.ArrowShootListener;
 import be.marijn2341.feroxcore.Listeners.DeathListener;
 import be.marijn2341.feroxcore.Main;
 import be.marijn2341.feroxcore.Manager.PlayerManager;
+import be.marijn2341.feroxcore.Manager.TeamManager;
+import com.google.gson.Gson;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -234,6 +236,25 @@ public class Database {
         }
     }
 
-
-
+    public static void InsertMapStats(String map, int blocksplaced, int blockbroken, long duration, String winner, int kills, int deaths, int arrowsshot, int arrowshit) {
+        String redm = new Gson().toJson(TeamManager.TeamRed);
+        String bluem = new Gson().toJson(TeamManager.TeamBlue);
+        try {
+            PreparedStatement ps = Main.getInstance().SQL.getConnection().prepareStatement("INSERT INTO GameStats SET gamemap=?, totalkills=?, totaldeaths=?, totalarrowsshot=?, totalarrowshit=?, blocksplaced=?, blocksbroken=?, matchduration=?, winner=?, teambluemembers=?, teamredmembers=?");
+            ps.setString(1, map);
+            ps.setInt(2, kills);
+            ps.setInt(3, deaths);
+            ps.setInt(4, arrowsshot);
+            ps.setInt(5, arrowshit);
+            ps.setInt(6, blocksplaced);
+            ps.setInt(7, blockbroken);
+            ps.setLong(8, duration);
+            ps.setString(9, winner);
+            ps.setString(10, bluem);
+            ps.setString(11, redm);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

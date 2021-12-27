@@ -5,6 +5,7 @@ import be.marijn2341.feroxcore.Listeners.ArrowShootListener;
 import be.marijn2341.feroxcore.Listeners.BlockPlaceListener;
 import be.marijn2341.feroxcore.Listeners.DeathListener;
 import be.marijn2341.feroxcore.Main;
+import be.marijn2341.feroxcore.Manager.Statistics.PlayerStatistics;
 import be.marijn2341.feroxcore.Utils.ItemStacks;
 import be.marijn2341.feroxcore.Utils.Utils;
 import com.nametagedit.plugin.NametagEdit;
@@ -29,6 +30,11 @@ public class MapManager {
     public static HashMap<String, String> currentmap = new HashMap<>();
     public static HashMap<String, Location> areas = new HashMap<>();
     public static HashMap<String, Location> lobby = new HashMap<>();
+
+    public static int kills = 0;
+    public static int deaths = 0;
+    public static int arrowsshot = 0;
+    public static int arrowshit = 0;
 
 
     public static void LoadMaps() {
@@ -105,6 +111,11 @@ public class MapManager {
             DeathListener.arrowshit.clear();
             ArrowShootListener.shot.clear();
 
+            kills = 0;
+            deaths = 0;
+            arrowshit = 0;
+            arrowsshot = 0;
+
             areas.put("redarea1", getSpawnArea1("red"));
             areas.put("redarea2", getSpawnArea2("red"));
             areas.put("bluearea1", getSpawnArea1("blue"));
@@ -141,7 +152,12 @@ public class MapManager {
 
                     // ADD WIN TO DATABASE
                     Database.SetWins(uuid, 1);
-                    Statistics.updateStats(uuid);
+                    PlayerStatistics.updateStats(uuid);
+
+                    kills = kills + DeathListener.Kills.get(plr.getUniqueId());
+                    deaths = deaths + DeathListener.Deaths.get(plr.getUniqueId());
+                    arrowsshot = arrowsshot + ArrowShootListener.shot.get(plr.getUniqueId());
+                    arrowshit = arrowshit + DeathListener.arrowshit.get(plr.getUniqueId());
 
                     // SEND STATS TO PLAYERS
                     plr.sendMessage(Utils.color("&8-----"));
@@ -162,7 +178,13 @@ public class MapManager {
 
                     // ADD LOSE TO DATABASE
                     Database.SetLoses(uuid, 1);
-                    Statistics.updateStats(uuid);
+                    // ADD PLAYER STATS TO DATABASE
+                    PlayerStatistics.updateStats(uuid);
+
+                    kills = kills + DeathListener.Kills.get(plr.getUniqueId());
+                    deaths = deaths + DeathListener.Deaths.get(plr.getUniqueId());
+                    arrowsshot = arrowsshot + ArrowShootListener.shot.get(plr.getUniqueId());
+                    arrowshit = arrowshit + DeathListener.arrowshit.get(plr.getUniqueId());
 
                     // SEND STATS TO PLAYERS
                     plr.sendMessage(Utils.color("&8-----"));
@@ -183,7 +205,12 @@ public class MapManager {
                     });
                 }
 
+                // ADD GAME STATS TO DATABASE
+                Database.InsertMapStats(currentmap.get("current"), BlockPlaceListener.blocks.get("placed"), BlockPlaceListener.blocks.get("broken"),
+                        GetMatchTimeMi(), winner, kills, deaths, arrowsshot, arrowshit);
+
                 GameActive = false;
+
                 TeamManager.ToSpawn.addAll(TeamManager.Losers);
                 TeamManager.ToSpawn.addAll(TeamManager.Winners);
                 TeamManager.ToSpawn.addAll(TeamManager.Spectator);
@@ -249,6 +276,11 @@ public class MapManager {
         long minutes = TimeUnit.SECONDS.toMinutes(seconds) - (hours * 60);
         String tijd =  hours + "h, " + minutes + "min";
         return tijd;
+    }
+
+    public static long GetMatchTimeMi() {
+        long milliseconds = new Date().getTime() - GameStarted.getTime();
+        return milliseconds;
     }
 
     public static void CollectItems(Player player) {

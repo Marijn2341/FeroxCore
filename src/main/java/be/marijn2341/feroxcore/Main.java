@@ -11,8 +11,6 @@ import com.onarandombox.MultiverseCore.MultiverseCore;
 import com.onarandombox.MultiverseCore.api.MVWorldManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -84,9 +82,10 @@ public class Main extends JavaPlugin {
         // MAIN INSTANCE
         instance = this;
 
-        // LAAD ALLE MAPPEN IN
+        // LOAD ALL MAPS
         MapManager.LoadMaps();
 
+        // IMPLEMENT MULTIVERSE CORE
         MultiverseCore core = (MultiverseCore) Bukkit.getServer().getPluginManager().getPlugin("Multiverse-Core");
         wm = core.getMVWorldManager();
 
@@ -115,20 +114,13 @@ public class Main extends JavaPlugin {
             throwables.printStackTrace();
         }
 
+        // LOAD THE LOBBY
         MapManager.LoadLobby();
     }
 
     @Override
     public void onDisable() {
         SQL.disconnect();
-    }
-
-    public void loadYaml(File file, FileConfiguration fileConfiguration) {
-        try {
-            fileConfiguration.load(file);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
     }
 
     public File getWorldsFile() {
