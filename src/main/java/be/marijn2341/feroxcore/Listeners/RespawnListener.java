@@ -19,7 +19,7 @@ public class RespawnListener implements Listener {
             @Override public void run() {
                 e.getEntity().spigot().respawn();
             }
-        }.runTaskLater(Main.getInstance(), 20);
+        }.runTaskLater(Main.getInstance(), 10);
     }
 
     @EventHandler
