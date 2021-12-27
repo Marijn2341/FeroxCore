@@ -6,7 +6,6 @@ import be.marijn2341.feroxcore.Commands.VerifyCommand;
 import be.marijn2341.feroxcore.Database.Database;
 import be.marijn2341.feroxcore.Listeners.*;
 import be.marijn2341.feroxcore.Manager.MapManager;
-import be.marijn2341.feroxcore.Manager.TeamManager;
 import com.onarandombox.MultiverseCore.MultiverseCore;
 import com.onarandombox.MultiverseCore.api.MVWorldManager;
 import org.bukkit.Bukkit;
@@ -17,6 +16,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -55,29 +55,10 @@ public class Main extends JavaPlugin {
         saveConfig();
 
         // REGISTER EVENTS
-        getServer().getPluginManager().registerEvents((Listener) new JoinListener(), (Plugin) this);
-        getServer().getPluginManager().registerEvents((Listener) new FoodListener(), (Plugin) this);
-        getServer().getPluginManager().registerEvents((Listener) new EntityDamageListener(), (Plugin) this);
-        getServer().getPluginManager().registerEvents((Listener) new LeafListener(), (Plugin) this);
-        getServer().getPluginManager().registerEvents((Listener) new PlayerInteractListener(), (Plugin) this);
-        getServer().getPluginManager().registerEvents((Listener) new QuitListener(), (Plugin) this);
-        getServer().getPluginManager().registerEvents((Listener) new InventoryClickListener(), (Plugin) this);
-        getServer().getPluginManager().registerEvents((Listener) new DeathListener(), (Plugin) this);
-        getServer().getPluginManager().registerEvents((Listener) new RespawnListener(), (Plugin) this);
-        getServer().getPluginManager().registerEvents((Listener) new BlockBreakListener(), (Plugin) this);
-        getServer().getPluginManager().registerEvents((Listener) new BlockPlaceListener(), (Plugin) this);
-        getServer().getPluginManager().registerEvents((Listener) new FriendlyFire(), (Plugin) this);
-        getServer().getPluginManager().registerEvents((Listener) new ChatListener(), (Plugin) this);
-        getServer().getPluginManager().registerEvents((Listener) new WeatherListener(), (Plugin) this);
-        getServer().getPluginManager().registerEvents((Listener) new ArrowShootListener(), (Plugin) this);
+        RegisterEvents();
 
         // REGISTER COMMANDS
-        getCommand("loadmaps").setExecutor((CommandExecutor)new LoadMapsCommand());
-        getCommand("skipmap").setExecutor((CommandExecutor)new SkipGameCommand());
-        getCommand("lobby").setExecutor((CommandExecutor)new LobbyCommand());
-        getCommand("verify").setExecutor((CommandExecutor)new VerifyCommand());
-        getCommand("startgame").setExecutor((CommandExecutor)new StartGameCommand());
-        getCommand("setup").setExecutor((CommandExecutor)new SetupCommand());
+        RegisterCommands();
 
         // MAIN INSTANCE
         instance = this;
@@ -92,24 +73,20 @@ public class Main extends JavaPlugin {
         // DELETE ACTIVE MAP ON EVERY RELOAD / RESTART.
         MapManager.ForceDeleteGame();
 
-        // IF THERE IS A PLAYER ONLINE, START A GAME.
-        if (TeamManager.CountOnlinePlayers() >= 1) {
-            MapManager.PreviousMap.clear();
-            MapManager.StartGame();
-        }
-
         // CHECK IF THERE ARE PLAYERS ONLINE (RELOAD)
         if (Bukkit.getOnlinePlayers().size() >= 1) {
+            MapManager.PreviousMap.clear();
+            MapManager.StartGame();
             for (Player plr : Bukkit.getOnlinePlayers()) {
                 MapManager.KickOnReload(plr);
             }
         }
 
-        // START DATABASE
+        // CONNECT TO DATABASE
         this.SQL = new Database();
         try {
             SQL.connect();
-            Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "MYSQL CONNECTED");
+            Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "MySQL Connected");
         } catch (SQLException | ClassNotFoundException throwables) {
             throwables.printStackTrace();
         }
@@ -138,5 +115,33 @@ public class Main extends JavaPlugin {
     public Main() {
         this.WorldsFile = new File(getDataFolder(), "worlds.yml");
         this.WorldsConfig = (FileConfiguration) YamlConfiguration.loadConfiguration(this.WorldsFile);
+    }
+
+    public void RegisterEvents() {
+        PluginManager plm = getServer().getPluginManager();
+        plm.registerEvents((Listener) new JoinListener(), (Plugin) this);
+        plm.registerEvents((Listener) new FoodListener(), (Plugin) this);
+        plm.registerEvents((Listener) new EntityDamageListener(), (Plugin) this);
+        plm.registerEvents((Listener) new LeafListener(), (Plugin) this);
+        plm.registerEvents((Listener) new PlayerInteractListener(), (Plugin) this);
+        plm.registerEvents((Listener) new QuitListener(), (Plugin) this);
+        plm.registerEvents((Listener) new InventoryClickListener(), (Plugin) this);
+        plm.registerEvents((Listener) new DeathListener(), (Plugin) this);
+        plm.registerEvents((Listener) new RespawnListener(), (Plugin) this);
+        plm.registerEvents((Listener) new BlockBreakListener(), (Plugin) this);
+        plm.registerEvents((Listener) new BlockPlaceListener(), (Plugin) this);
+        plm.registerEvents((Listener) new FriendlyFire(), (Plugin) this);
+        plm.registerEvents((Listener) new ChatListener(), (Plugin) this);
+        plm.registerEvents((Listener) new WeatherListener(), (Plugin) this);
+        plm.registerEvents((Listener) new ArrowShootListener(), (Plugin) this);
+    }
+
+    public void RegisterCommands() {
+        getCommand("loadmaps").setExecutor((CommandExecutor)new LoadMapsCommand());
+        getCommand("skipmap").setExecutor((CommandExecutor)new SkipGameCommand());
+        getCommand("lobby").setExecutor((CommandExecutor)new LobbyCommand());
+        getCommand("verify").setExecutor((CommandExecutor)new VerifyCommand());
+        getCommand("startgame").setExecutor((CommandExecutor)new StartGameCommand());
+        getCommand("setup").setExecutor((CommandExecutor)new SetupCommand());
     }
 }
