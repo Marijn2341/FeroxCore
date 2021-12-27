@@ -1,4 +1,4 @@
-package be.marijn2341.feroxcore.Manager;
+package be.marijn2341.feroxcore.Manager.Statistics;
 
 import be.marijn2341.feroxcore.Database.Database;
 import be.marijn2341.feroxcore.Listeners.ArrowShootListener;
@@ -6,7 +6,7 @@ import be.marijn2341.feroxcore.Listeners.DeathListener;
 
 import java.util.UUID;
 
-public class Statistics {
+public class PlayerStatistics {
 
     public static void updateStats(UUID uuid) {
         int deaths = DeathListener.Deaths.get(uuid);
