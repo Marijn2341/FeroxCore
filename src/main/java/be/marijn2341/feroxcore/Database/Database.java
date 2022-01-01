@@ -42,7 +42,7 @@ public class Database {
 
         dataSource = new HikariDataSource(config);
 
-        Bukkit.broadcastMessage(ChatColor.GREEN + "MySQL Connected");
+        Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "MySQL Connected");
     }
 
     public static HikariDataSource getHikari(){
