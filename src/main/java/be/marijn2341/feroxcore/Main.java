@@ -10,7 +10,6 @@ import be.marijn2341.feroxcore.Utils.Utils;
 import com.onarandombox.MultiverseCore.MultiverseCore;
 import com.onarandombox.MultiverseCore.api.MVWorldManager;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -21,7 +20,6 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
-import java.sql.SQLException;
 
 public class Main extends JavaPlugin {
 
@@ -31,8 +29,6 @@ public class Main extends JavaPlugin {
     private static Main instance;
 
     public static MVWorldManager wm;
-
-    public Database SQL;
 
     @Override
     public void onEnable() {
@@ -84,13 +80,7 @@ public class Main extends JavaPlugin {
         }
 
         // CONNECT TO DATABASE
-        this.SQL = new Database();
-        try {
-            SQL.connect();
-            Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "MySQL Connected");
-        } catch (SQLException | ClassNotFoundException throwables) {
-            throwables.printStackTrace();
-        }
+        Database.initialize();
 
         // LOAD THE LOBBY
         MapManager.LoadLobby();
@@ -98,7 +88,7 @@ public class Main extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        SQL.disconnect();
+        Database.getHikari().close();
     }
 
     public File getWorldsFile() {
