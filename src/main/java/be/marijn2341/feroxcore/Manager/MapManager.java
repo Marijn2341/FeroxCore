@@ -230,6 +230,9 @@ public class MapManager {
                 LoadMaps();
                 Maps.remove(PreviousMap.get(0));
             }
+            Maps.remove(PreviousMap.get(0));
+            String map = Maps.get(new Random().nextInt(Maps.size()));
+            return map;
         }
         String map = Maps.get(new Random().nextInt(Maps.size()));
         Maps.remove(map);
