@@ -63,7 +63,7 @@ public class RegistrationDatabase {
 
     public static boolean CheckIfCodeExists(String code) {
         try (Connection con = Database.getHikari().getConnection();
-             PreparedStatement statement = con.prepareStatement("SELECT 1 FROM Stats WHERE code=?")) {
+             PreparedStatement statement = con.prepareStatement("SELECT 1 FROM RegistrationCodes WHERE code=?")) {
             statement.setString(1, code);
             ResultSet results = statement.executeQuery();
             if (results.next()) {
