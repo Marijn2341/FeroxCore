@@ -4,7 +4,6 @@ import be.marijn2341.feroxcore.Commands.LobbyCommand;
 import be.marijn2341.feroxcore.Commands.Staff.*;
 import be.marijn2341.feroxcore.Commands.StatisticsCommand;
 import be.marijn2341.feroxcore.Commands.VerifyCommand;
-import be.marijn2341.feroxcore.Commands.testCommand;
 import be.marijn2341.feroxcore.Database.Database;
 import be.marijn2341.feroxcore.Listeners.*;
 import be.marijn2341.feroxcore.Manager.InventorySettings.Listeners.InventoryDragListener;
@@ -144,6 +143,5 @@ public class Main extends JavaPlugin {
         getCommand("startgame").setExecutor((CommandExecutor)new StartGameCommand());
         getCommand("setup").setExecutor((CommandExecutor)new SetupCommand());
         getCommand("statistics").setExecutor((CommandExecutor) new StatisticsCommand());
-        getCommand("test").setExecutor((CommandExecutor) new testCommand());
     }
 }

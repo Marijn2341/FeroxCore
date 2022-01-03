@@ -25,7 +25,6 @@ commands:
   statistics:
     description: See all your statistics.
     aliases: [stats, stat, statestieken]
-  test:
 
 permissions:
   ferox.admin:
