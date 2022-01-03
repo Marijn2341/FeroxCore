@@ -2,10 +2,14 @@ package be.marijn2341.feroxcore;
 
 import be.marijn2341.feroxcore.Commands.LobbyCommand;
 import be.marijn2341.feroxcore.Commands.Staff.*;
+import be.marijn2341.feroxcore.Commands.StatisticsCommand;
 import be.marijn2341.feroxcore.Commands.VerifyCommand;
+import be.marijn2341.feroxcore.Commands.testCommand;
 import be.marijn2341.feroxcore.Database.Database;
 import be.marijn2341.feroxcore.Listeners.*;
+import be.marijn2341.feroxcore.Manager.InventorySettings.Listeners.InventoryDragListener;
 import be.marijn2341.feroxcore.Manager.MapManager;
+import be.marijn2341.feroxcore.Manager.PlayerManager;
 import be.marijn2341.feroxcore.Utils.Utils;
 import com.onarandombox.MultiverseCore.MultiverseCore;
 import com.onarandombox.MultiverseCore.api.MVWorldManager;
@@ -59,6 +63,9 @@ public class Main extends JavaPlugin {
 
         // MAIN INSTANCE
         instance = this;
+
+        // LOAD DEFAULT INVENTORY
+        PlayerManager.LoadDefaultItems();
 
         // LOAD ALL MAPS
         MapManager.LoadMaps();
@@ -125,6 +132,8 @@ public class Main extends JavaPlugin {
         plm.registerEvents((Listener) new ChatListener(), (Plugin) this);
         plm.registerEvents((Listener) new WeatherListener(), (Plugin) this);
         plm.registerEvents((Listener) new ArrowShootListener(), (Plugin) this);
+        plm.registerEvents((Listener) new be.marijn2341.feroxcore.Manager.InventorySettings.Listeners.InventoryClickListener(), (Plugin) this);
+        plm.registerEvents((Listener) new InventoryDragListener(), (Plugin) this);
     }
 
     public void RegisterCommands() {
@@ -134,5 +143,7 @@ public class Main extends JavaPlugin {
         getCommand("verify").setExecutor((CommandExecutor)new VerifyCommand());
         getCommand("startgame").setExecutor((CommandExecutor)new StartGameCommand());
         getCommand("setup").setExecutor((CommandExecutor)new SetupCommand());
+        getCommand("statistics").setExecutor((CommandExecutor) new StatisticsCommand());
+        getCommand("test").setExecutor((CommandExecutor) new testCommand());
     }
 }

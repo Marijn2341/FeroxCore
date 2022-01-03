@@ -1,7 +1,9 @@
 package be.marijn2341.feroxcore.Listeners;
 
 import be.marijn2341.feroxcore.Database.Database;
+import be.marijn2341.feroxcore.Manager.InventorySettings.ItemStackSerializer;
 import be.marijn2341.feroxcore.Manager.MapManager;
+import be.marijn2341.feroxcore.Manager.PlayerManager;
 import be.marijn2341.feroxcore.Manager.TeamManager;
 import be.marijn2341.feroxcore.Utils.Utils;
 import com.nametagedit.plugin.NametagEdit;
@@ -9,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.inventory.ItemStack;
 
 public class JoinListener implements Listener {
 
@@ -25,6 +28,11 @@ public class JoinListener implements Listener {
         // CHECK IF USER IS IN DATABASE, IF NOT, INSERT USER
         if (!(Database.CheckIfUserExists(player.getUniqueId()))) {
             Database.InsertNewUser(player.getUniqueId());
+        }
+
+        if (!(Database.InventoryPlayerExists(player))) {
+            String inv = ItemStackSerializer.serialize(PlayerManager.defaultitems.toArray(new ItemStack[0]));
+            Database.SetInventory(player, inv);
         }
 
         // TELEPORT PLAYER TO SPAWN

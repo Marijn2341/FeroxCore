@@ -8,8 +8,13 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 import java.sql.*;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 public class Database {
@@ -259,6 +264,60 @@ public class Database {
             ps.setString(9, winner);
             ps.setString(10, bluem);
             ps.setString(11, redm);
+            ps.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static boolean InventoryPlayerExists(Player player) {
+        try (Connection con = getHikari().getConnection();
+        PreparedStatement ps = con.prepareStatement("SELECT * FROM InventorySettings WHERE uuid=?")) {
+            ps.setString(1, String.valueOf(player.getUniqueId()));
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                rs.close();
+                return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static String GetInventory(Player player) {
+
+        String inv = null;
+        try (Connection con = getHikari().getConnection();
+        PreparedStatement ps = con.prepareStatement("SELECT inventory FROM InventorySettings WHERE uuid=?")) {
+        ps.setString(1, String.valueOf(player.getUniqueId()));
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                inv = rs.getString("inventory");
+            }
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return inv;
+    }
+
+    public static void UpdateInventory(Player player, String obj) {
+        try (Connection con = getHikari().getConnection();
+        PreparedStatement ps = con.prepareStatement("UPDATE InventorySettings SET inventory=? WHERE uuid=?")) {
+            ps.setString(1, obj);
+            ps.setString(2, String.valueOf(player.getUniqueId()));
+            ps.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void SetInventory(Player player, String obj) {
+        try (Connection con = getHikari().getConnection();
+             PreparedStatement ps = con.prepareStatement("INSERT INTO InventorySettings SET inventory=?, uuid=?")) {
+            ps.setString(1, obj);
+            ps.setString(2, String.valueOf(player.getUniqueId()));
             ps.execute();
         } catch (SQLException e) {
             e.printStackTrace();

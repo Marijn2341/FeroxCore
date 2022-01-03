@@ -22,6 +22,10 @@ commands:
     description: You can start a game with this command.
   setup:
     description: Setup a new map or lobby.
+  statistics:
+    description: See all your statistics.
+    aliases: [stats, stat, statestieken]
+  test:
 
 permissions:
   ferox.admin:

@@ -4,6 +4,7 @@ import be.marijn2341.feroxcore.Main;
 import be.marijn2341.feroxcore.Manager.MapManager;
 import be.marijn2341.feroxcore.Manager.TeamManager;
 import be.marijn2341.feroxcore.Utils.Utils;
+import be.marijn2341.feroxcore.Utils.gui;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -64,6 +65,18 @@ public class InventoryClickListener implements Listener {
             if (e.getClickedInventory().getType() == InventoryType.PLAYER) return;
             if (e.getClickedInventory() == null) return;
             if (e.getClickedInventory().getItem(e.getSlot()) == null) return;
+        }
+
+        if (e.getInventory().getTitle().equalsIgnoreCase(Utils.color("&6" + player.getName()))) {
+            e.setCancelled(true);
+            if (e.getCurrentItem() == null) return;
+            if (e.getClickedInventory().getType() == InventoryType.PLAYER) return;
+            if (e.getClickedInventory() == null) return;
+            if (e.getClickedInventory().getItem(e.getSlot()) == null) return;
+            if (e.getSlot() == 14) {
+                gui.CreateSettingsMenu(player);
+                return;
+            }
         }
 
         if (player.getWorld().getName().equals(MapManager.lobby.get("lobby").getWorld().getName())) {

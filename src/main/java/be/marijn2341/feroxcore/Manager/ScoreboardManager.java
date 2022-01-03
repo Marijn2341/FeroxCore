@@ -97,7 +97,7 @@ public class ScoreboardManager {
         }
 
         obj.getScore("").setScore(2);
-        obj.getScore(Utils.color("&7play.ferox.host")).setScore(1);
+        obj.getScore(Utils.color("&7pvp.feroxhosting.nl")).setScore(1);
 
         player.setScoreboard(scoreboard);
     }
@@ -133,7 +133,7 @@ public class ScoreboardManager {
         obj.getScore(Utils.color("&9Deaths: &f") + Database.GetDeathsDB(player.getUniqueId())).setScore(4);
         obj.getScore(Utils.color("&9Playtime: &f" + PlayerManager.GetOnlineTime(player))).setScore(3);
         obj.getScore("").setScore(2);
-        obj.getScore(Utils.color("&7play.ferox.host")).setScore(1);
+        obj.getScore(Utils.color("&7pvp.feroxhosting.nl")).setScore(1);
 
 
         player.setScoreboard(scoreboard);

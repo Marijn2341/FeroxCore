@@ -5,6 +5,7 @@ import be.marijn2341.feroxcore.Listeners.ArrowShootListener;
 import be.marijn2341.feroxcore.Listeners.BlockPlaceListener;
 import be.marijn2341.feroxcore.Listeners.DeathListener;
 import be.marijn2341.feroxcore.Main;
+import be.marijn2341.feroxcore.Manager.InventorySettings.ItemStackSerializer;
 import be.marijn2341.feroxcore.Manager.Statistics.GameStatistics;
 import be.marijn2341.feroxcore.Manager.Statistics.PlayerStatistics;
 import be.marijn2341.feroxcore.Utils.ItemStacks;
@@ -254,29 +255,9 @@ public class MapManager {
     }
 
     public static void CollectItems(Player player) {
-        Inventory inv = player.getInventory();
-        ItemStack sword = new ItemStack(Material.STONE_SWORD);
-        ItemStack bow = new ItemStack(Material.BOW);
-        ItemStack pickaxe = new ItemStack(Material.DIAMOND_PICKAXE);
-        ItemStack axe = new ItemStack(Material.STONE_AXE);
-        ItemStack arrows = new ItemStack(Material.ARROW, 16);
-        ItemStack logs = new ItemStack(Material.LOG, 64);
-        ItemStack glass = new ItemStack(Material.GLASS, 64);
-        ItemStack gapple = new ItemStack(Material.GOLDEN_APPLE);
-        ItemStack steak = new ItemStack(Material.COOKED_BEEF, 16);
-
-        pickaxe.addEnchantment(Enchantment.DIG_SPEED, 1);
-
-        inv.setItem(0, sword);
-        inv.setItem(1, bow);
-        inv.setItem(2, pickaxe);
-        inv.setItem(3, axe);
-        inv.setItem(27, arrows);
-        inv.setItem(4, logs);
-        inv.setItem(5, glass);
-        inv.setItem(6, gapple);
-        inv.setItem(7, steak);
-
+        String inv = Database.GetInventory(player);
+        ItemStack[] is = ItemStackSerializer.deserialize(inv);
+        player.getInventory().setContents(is);
         player.updateInventory();
     }
 

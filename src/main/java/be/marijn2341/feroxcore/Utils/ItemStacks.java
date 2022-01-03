@@ -9,6 +9,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +29,30 @@ public class ItemStacks {
         woolMeta.setDisplayName(Utils.color("&9Blue Team"));
         wool.setItemMeta(woolMeta);
         return wool;
+    }
+
+    public ItemStack blue_stained_glass() {
+        ItemStack item = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 11);
+        ItemMeta itemMeta = item.getItemMeta();
+        itemMeta.setDisplayName(Utils.color("&7"));
+        item.setItemMeta(itemMeta);
+        return item;
+    }
+
+    public ItemStack red_stained_glass() {
+        ItemStack item = new ItemStack(Material.STAINED_GLASS, 1, (short) 14);
+        ItemMeta itemMeta = item.getItemMeta();
+        itemMeta.setDisplayName(Utils.color("&c&lCancel"));
+        item.setItemMeta(itemMeta);
+        return item;
+    }
+
+    public ItemStack green_stained_glass() {
+        ItemStack item = new ItemStack(Material.STAINED_GLASS, 1, (short) 5);
+        ItemMeta itemMeta = item.getItemMeta();
+        itemMeta.setDisplayName(Utils.color("&a&lSave"));
+        item.setItemMeta(itemMeta);
+        return item;
     }
 
     public ItemStack red_wool_selector() {
@@ -58,7 +83,7 @@ public class ItemStacks {
         ItemStack skull = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
         SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
         skullMeta.setOwner(player.getName());
-        skullMeta.setDisplayName(Utils.color("&6Statistics"));
+        skullMeta.setDisplayName(Utils.color("&6" + player.getName()));
         skull.setItemMeta(skullMeta);
         return skull;
     }
@@ -190,6 +215,53 @@ public class ItemStacks {
         return item;
     }
 
+    public ItemStack PlayerStatistics(Player player) {
+        int kills = Database.GetKillsDB(player.getUniqueId());
+        int deaths = Database.GetDeathsDB(player.getUniqueId());
+        int nexusesbroken = Database.GetBrokenNexuses(player.getUniqueId());
+        int wins = Database.GetWins(player.getUniqueId());
+        int loses = Database.GetLoses(player.getUniqueId());
+        String time = PlayerManager.GetOnlineTime(player);
 
 
+        ArrayList<String> lore = new ArrayList<>();
+        lore.add(Utils.color("&7Kills: &f" + kills));
+        lore.add(Utils.color("&7Deaths: &f" + deaths));
+        lore.add(Utils.color("&7Wins: &f" + wins));
+        lore.add(Utils.color("&7Loses: &f" + loses));
+        lore.add(Utils.color("&7Nexuses broken: &f" + nexusesbroken));
+        lore.add(Utils.color("&7Time: &f" + time));
+
+        ItemStack item = new ItemStack(Material.RED_ROSE);
+        ItemMeta itemMeta = item.getItemMeta();
+        itemMeta.setLore(lore);
+        itemMeta.setDisplayName(Utils.color("&6Player Statistics"));
+        item.setItemMeta(itemMeta);
+        return item;
+    }
+
+    public ItemStack PlayerSettings() {
+        ArrayList<String> lore = new ArrayList<>();
+        lore.add(Utils.color("&7Edit your settings."));
+
+        ItemStack item = new ItemStack(Material.ANVIL);
+        ItemMeta itemMeta = item.getItemMeta();
+        itemMeta.setDisplayName(Utils.color("&6Settings"));
+        itemMeta.setLore(lore);
+        item.setItemMeta(itemMeta);
+        return item;
+    }
+
+    public ItemStack EditInventory() {
+        ArrayList<String> lore = new ArrayList<>();
+        lore.add(Utils.color("&7Click here to change"));
+        lore.add(Utils.color("&7your ingame inventory."));
+
+        ItemStack item = new ItemStack(Material.STONE_SWORD);
+        ItemMeta itemMeta = item.getItemMeta();
+        itemMeta.setDisplayName(Utils.color("&6Edit Inventory"));
+        itemMeta.setLore(lore);
+        item.setItemMeta(itemMeta);
+        return item;
+    }
 }

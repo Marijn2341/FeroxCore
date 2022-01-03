@@ -36,8 +36,8 @@ public class PlayerInteractListener implements Listener {
         }
 
         if (e.getAction() == Action.RIGHT_CLICK_AIR && e.getItem().getType() == Material.SKULL_ITEM) {
-            if (player.getInventory().getItemInHand().getItemMeta().getDisplayName().equals(Utils.color("&6Statistics"))) {
-                gui.CreateStaticsMenu(player);
+            if (player.getInventory().getItemInHand().getItemMeta().getDisplayName().equals(Utils.color("&6" + player.getName()))) {
+                gui.CreatePlayerMenu(player);
             }
         }
     }

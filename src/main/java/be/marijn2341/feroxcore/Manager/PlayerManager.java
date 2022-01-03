@@ -2,14 +2,19 @@ package be.marijn2341.feroxcore.Manager;
 
 import be.marijn2341.feroxcore.Utils.Utils;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.Statistic;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
-import java.sql.Time;
+import java.util.ArrayList;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class PlayerManager {
+
+    public static ArrayList<ItemStack> defaultitems = new ArrayList<ItemStack>();
 
     public static String GetOnlineTime(Player player) {
 
@@ -39,5 +44,23 @@ public class PlayerManager {
 
     public static long GetJumpsPlayer(Player player) {
         return (player.getStatistic(Statistic.JUMP));
+    }
+
+    public static void LoadDefaultItems() {
+
+        ItemStack pickaxe = new ItemStack(Material.DIAMOND_PICKAXE);
+        pickaxe.addEnchantment(Enchantment.DIG_SPEED, 1);
+
+        defaultitems.add(new ItemStack(Material.STONE_SWORD));
+        defaultitems.add(new ItemStack(Material.BOW));
+        defaultitems.add(pickaxe);
+        defaultitems.add(new ItemStack(Material.STONE_AXE));
+        defaultitems.add(new ItemStack(Material.AIR));
+        defaultitems.add(new ItemStack(Material.LOG, 64));
+        defaultitems.add(new ItemStack(Material.GLASS, 64));
+        defaultitems.add(new ItemStack(Material.GOLDEN_APPLE));
+        defaultitems.add(new ItemStack(Material.COOKED_BEEF, 16));
+        defaultitems.add(new ItemStack(Material.ARROW, 16));
+
     }
 }
