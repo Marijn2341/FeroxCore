@@ -1,15 +1,15 @@
 package be.marijn2341.feroxcore;
 
-import be.marijn2341.feroxcore.Commands.LobbyCommand;
-import be.marijn2341.feroxcore.Commands.Staff.*;
-import be.marijn2341.feroxcore.Commands.StatisticsCommand;
-import be.marijn2341.feroxcore.Commands.VerifyCommand;
-import be.marijn2341.feroxcore.Database.Database;
-import be.marijn2341.feroxcore.Listeners.*;
-import be.marijn2341.feroxcore.Manager.InventorySettings.Listeners.InventoryDragListener;
-import be.marijn2341.feroxcore.Manager.MapManager;
-import be.marijn2341.feroxcore.Manager.PlayerManager;
-import be.marijn2341.feroxcore.Utils.Utils;
+import be.marijn2341.feroxcore.commands.LobbyCommand;
+import be.marijn2341.feroxcore.commands.staff.*;
+import be.marijn2341.feroxcore.commands.StatisticsCommand;
+import be.marijn2341.feroxcore.commands.VerifyCommand;
+import be.marijn2341.feroxcore.database.Database;
+import be.marijn2341.feroxcore.listeners.*;
+import be.marijn2341.feroxcore.manager.inventorysettings.Listeners.InventoryDragListener;
+import be.marijn2341.feroxcore.manager.MapManager;
+import be.marijn2341.feroxcore.manager.PlayerManager;
+import be.marijn2341.feroxcore.utils.Utils;
 import com.onarandombox.MultiverseCore.MultiverseCore;
 import com.onarandombox.MultiverseCore.api.MVWorldManager;
 import org.bukkit.Bukkit;
@@ -55,19 +55,19 @@ public class Main extends JavaPlugin {
         saveConfig();
 
         // REGISTER EVENTS
-        RegisterEvents();
+        registerEvents();
 
         // REGISTER COMMANDS
-        RegisterCommands();
+        registerCommands();
 
         // MAIN INSTANCE
         instance = this;
 
         // LOAD DEFAULT INVENTORY
-        PlayerManager.LoadDefaultItems();
+        PlayerManager.loadDefaultItems();
 
         // LOAD ALL MAPS
-        MapManager.LoadMaps();
+        MapManager.loadMaps();
 
         // IMPLEMENT MULTIVERSE CORE
         MultiverseCore core = (MultiverseCore) Bukkit.getServer().getPluginManager().getPlugin("Multiverse-Core");
@@ -78,8 +78,8 @@ public class Main extends JavaPlugin {
 
         // CHECK IF THERE ARE PLAYERS ONLINE (RELOAD)
         if (Bukkit.getOnlinePlayers().size() >= 1) {
-            MapManager.PreviousMap.clear();
-            MapManager.StartGame();
+            MapManager.PREVIOUSMAP.clear();
+            MapManager.startGame();
             for (Player plr : Bukkit.getOnlinePlayers()) {
                 Utils.KickOnReload(plr);
             }
@@ -89,7 +89,7 @@ public class Main extends JavaPlugin {
         Database.initialize();
 
         // LOAD THE LOBBY
-        MapManager.LoadLobby();
+        MapManager.loadLobby();
     }
 
     @Override
@@ -114,7 +114,7 @@ public class Main extends JavaPlugin {
         this.WorldsConfig = (FileConfiguration) YamlConfiguration.loadConfiguration(this.WorldsFile);
     }
 
-    public void RegisterEvents() {
+    public void registerEvents() {
         PluginManager plm = getServer().getPluginManager();
         plm.registerEvents((Listener) new JoinListener(), (Plugin) this);
         plm.registerEvents((Listener) new FoodListener(), (Plugin) this);
@@ -131,11 +131,11 @@ public class Main extends JavaPlugin {
         plm.registerEvents((Listener) new ChatListener(), (Plugin) this);
         plm.registerEvents((Listener) new WeatherListener(), (Plugin) this);
         plm.registerEvents((Listener) new ArrowShootListener(), (Plugin) this);
-        plm.registerEvents((Listener) new be.marijn2341.feroxcore.Manager.InventorySettings.Listeners.InventoryClickListener(), (Plugin) this);
+        plm.registerEvents((Listener) new be.marijn2341.feroxcore.manager.inventorysettings.Listeners.InventoryClickListener(), (Plugin) this);
         plm.registerEvents((Listener) new InventoryDragListener(), (Plugin) this);
     }
 
-    public void RegisterCommands() {
+    public void registerCommands() {
         getCommand("loadmaps").setExecutor((CommandExecutor)new LoadMapsCommand());
         getCommand("skipmap").setExecutor((CommandExecutor)new SkipGameCommand());
         getCommand("lobby").setExecutor((CommandExecutor)new LobbyCommand());
