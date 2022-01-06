@@ -1,5 +1,6 @@
 package be.marijn2341.feroxcore.manager.inventorysettings;
 
+import be.marijn2341.feroxcore.Main;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
@@ -10,7 +11,7 @@ import java.io.ByteArrayOutputStream;
 
 public class ItemStackSerializer {
 
-    public static String serialize(ItemStack[] obj) {
+    public String serialize(ItemStack[] obj) {
         try {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             BukkitObjectOutputStream dataOutput = new BukkitObjectOutputStream(outputStream);
@@ -25,7 +26,7 @@ public class ItemStackSerializer {
         }
     }
 
-    public static ItemStack[] deserialize(String str) {
+    public ItemStack[] deserialize(String str) {
         try {
             ByteArrayInputStream inputStream = new ByteArrayInputStream(Base64Coder.decodeLines(str));
             BukkitObjectInputStream dataInput = new BukkitObjectInputStream(inputStream);

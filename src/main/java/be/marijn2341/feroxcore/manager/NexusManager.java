@@ -1,51 +1,45 @@
 package be.marijn2341.feroxcore.manager;
 
 import be.marijn2341.feroxcore.Main;
+import be.marijn2341.feroxcore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 
-import java.util.HashMap;
-
 public class NexusManager {
 
-    public static HashMap<String, Location> REDNEXUSESLOC = new HashMap<>();
-    public static HashMap<String, Location> BLUENEXUSESLOC = new HashMap<>();
-    public static HashMap<String, Location> REDNEXUSESLOCTOTAL = new HashMap<>();
-    public static HashMap<String, Location> BLUENEXUSESLOCTOTAL = new HashMap<>();
+    private Main main = Main.getInstance();
 
-    public static void countNexuses() {
+    public void countNexuses() {
 
         FileConfiguration config = Main.getInstance().getWorldsConfig();
-
-        for (String team : config.getConfigurationSection("worlds." + MapManager.CURRENTMAP.get("current") +
-                ".nexuses").getKeys(false)) {
-            for (String nexus : config.getConfigurationSection("worlds." + MapManager.CURRENTMAP.get("current") +
+        for (String team : Main.getInstance().getWorldsConfig().getConfigurationSection("worlds." + main.getDataManager().getCurrentMap().get("current") + ".nexuses").getKeys(false)) {
+            for (String nexus : config.getConfigurationSection("worlds." + main.getDataManager().getCurrentMap().get("current") +
                     ".nexuses." + team).getKeys(false)) {
 
-                World game = Bukkit.getWorld(MapManager.CURRENTMAP.get("current") + "_activegame");
-                double x = config.getDouble("worlds." + MapManager.CURRENTMAP.get("current") + ".nexuses." + team + "." + nexus + ".x");
-                double y = config.getDouble("worlds." + MapManager.CURRENTMAP.get("current") + ".nexuses." + team + "." + nexus + ".y");
-                double z = config.getDouble("worlds." + MapManager.CURRENTMAP.get("current") + ".nexuses." + team + "." + nexus + ".z");
+                World game = Bukkit.getWorld(main.getDataManager().getCurrentMap().get("current") + "_activegame");
+                double x = config.getDouble("worlds." + main.getDataManager().getCurrentMap().get("current") + ".nexuses." + team + "." + nexus + ".x");
+                double y = config.getDouble("worlds." + main.getDataManager().getCurrentMap().get("current") + ".nexuses." + team + "." + nexus + ".y");
+                double z = config.getDouble("worlds." + main.getDataManager().getCurrentMap().get("current") + ".nexuses." + team + "." + nexus + ".z");
 
                 Location loc = new Location(game, x, y, z);
 
                 if (team.equalsIgnoreCase("red")) {
-                    REDNEXUSESLOC.put(nexus, loc);
+                    main.getDataManager().getRedNexusesLoc().put(nexus, loc);
                 } else if (team.equalsIgnoreCase("blue")) {
-                    BLUENEXUSESLOC.put(nexus, loc);
+                    main.getDataManager().getBlueNexusesLoc().put(nexus, loc);
                 }
             }
         }
-        REDNEXUSESLOCTOTAL.putAll(REDNEXUSESLOC);
-        BLUENEXUSESLOCTOTAL.putAll(BLUENEXUSESLOC);
+        main.getDataManager().getRedNexusesLocTotal().putAll(main.getDataManager().getRedNexusesLoc());
+        main.getDataManager().getBlueNexusesLocTotal().putAll(main.getDataManager().getBlueNexusesLoc());
     }
 
-    public static boolean nexusAlive(String team, String nexus) {
+    public boolean nexusAlive(String team, String nexus) {
 
         if (team.equalsIgnoreCase("red")) {
-            if (REDNEXUSESLOC.containsKey(nexus)) {
+            if (main.getDataManager().getRedNexusesLoc().containsKey(nexus)) {
                 return true;
             } else {
                 return false;
@@ -53,7 +47,7 @@ public class NexusManager {
         }
 
         if (team.equalsIgnoreCase("blue")) {
-            if (BLUENEXUSESLOC.containsKey(nexus)) {
+            if (main.getDataManager().getBlueNexusesLoc().containsKey(nexus)) {
                 return true;
             } else {
                 return false;

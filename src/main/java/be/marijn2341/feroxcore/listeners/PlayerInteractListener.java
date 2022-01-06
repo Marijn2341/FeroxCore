@@ -1,5 +1,6 @@
 package be.marijn2341.feroxcore.listeners;
 
+import be.marijn2341.feroxcore.Main;
 import be.marijn2341.feroxcore.commands.staff.SetupCommand;
 import be.marijn2341.feroxcore.manager.MapManager;
 import be.marijn2341.feroxcore.manager.TeamManager;
@@ -13,6 +14,9 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 public class PlayerInteractListener implements Listener {
+
+    private Main main = Main.getInstance();
+
     @EventHandler
     public void onclick(PlayerInteractEvent e) {
         Player player = e.getPlayer();
@@ -22,8 +26,8 @@ public class PlayerInteractListener implements Listener {
                 return;
             }
             if (MapManager.GAMEACTIVE) {
-                if (!(TeamManager.AllreadyInTeam(e.getPlayer()))) {
-                    Gui.createTeamSelectorMenu(player);
+                if (!(main.getTeamManager().AllreadyInTeam(e.getPlayer()))) {
+                    main.getGui().createTeamSelectorMenu(player);
                 } else {
                     e.getPlayer().sendMessage(Utils.color("&cYou are allready in a team, Go to the lobby with /lobby and try it again."));
                     return;
@@ -36,7 +40,7 @@ public class PlayerInteractListener implements Listener {
 
         if (e.getAction() == Action.RIGHT_CLICK_AIR && e.getItem().getType() == Material.SKULL_ITEM) {
             if (player.getInventory().getItemInHand().getItemMeta().getDisplayName().equals(Utils.color("&6" + player.getName()))) {
-                Gui.createPlayerMenu(player);
+                main.getGui().createPlayerMenu(player);
             }
         }
     }

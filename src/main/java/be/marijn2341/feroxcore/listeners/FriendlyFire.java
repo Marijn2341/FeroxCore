@@ -1,6 +1,7 @@
 package be.marijn2341.feroxcore.listeners;
 
-import be.marijn2341.feroxcore.manager.TeamManager;
+import be.marijn2341.feroxcore.Main;
+import be.marijn2341.feroxcore.manager.DataManager;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -10,6 +11,9 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.projectiles.ProjectileSource;
 
 public class FriendlyFire implements Listener {
+
+    private Main main = Main.getInstance();
+
     @EventHandler
     public void onDamage(EntityDamageByEntityEvent e) {
         if (e.getEntity() instanceof Player && (e.getDamager() instanceof Player || e.getDamager() instanceof Projectile)) {
@@ -26,14 +30,14 @@ public class FriendlyFire implements Listener {
             }
 
 
-            if (!TeamManager.TEAMRED.contains(Damager.getUniqueId()) && !TeamManager.TEAMBLUE.contains(Damager.getUniqueId())) {
+            if (!main.getDataManager().getTeamRed().contains(Damager.getUniqueId()) && !main.getDataManager().getTeamBlue().contains(Damager.getUniqueId())) {
                 e.setCancelled(true);
             }
 
-            if (TeamManager.TEAMRED.contains(Damager.getUniqueId()) && TeamManager.TEAMRED.contains(e.getEntity().getUniqueId())) {
+            if (main.getDataManager().getTeamRed().contains(Damager.getUniqueId()) && main.getDataManager().getTeamRed().contains(e.getEntity().getUniqueId())) {
                 e.setCancelled(true);
             }
-            if (TeamManager.TEAMBLUE.contains(Damager.getUniqueId()) && TeamManager.TEAMBLUE.contains(e.getEntity().getUniqueId())) {
+            if (main.getDataManager().getTeamBlue().contains(Damager.getUniqueId()) && main.getDataManager().getTeamBlue().contains(e.getEntity().getUniqueId())) {
                 e.setCancelled(true);
             }
 

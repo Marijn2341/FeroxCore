@@ -1,6 +1,7 @@
 package be.marijn2341.feroxcore.listeners;
 
 import be.marijn2341.feroxcore.Main;
+import be.marijn2341.feroxcore.manager.DataManager;
 import be.marijn2341.feroxcore.manager.MapManager;
 import be.marijn2341.feroxcore.manager.TeamManager;
 import org.bukkit.entity.Player;
@@ -11,6 +12,8 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class RespawnListener implements Listener {
+
+    private Main main = Main.getInstance();
 
     @EventHandler
     public void onDeath(PlayerDeathEvent e){
@@ -27,12 +30,12 @@ public class RespawnListener implements Listener {
         new BukkitRunnable() {
             @Override
             public void run() {
-                if (TeamManager.TEAMRED.contains(player.getUniqueId())) {
-                    TeamManager.processToTeam("red", player);
-                } else if (TeamManager.TEAMBLUE.contains(player.getUniqueId())) {
-                    TeamManager.processToTeam("blue", player);
+                if (main.getDataManager().getTeamRed().contains(player.getUniqueId())) {
+                    main.getTeamManager().processToTeam("red", player);
+                } else if (main.getDataManager().getTeamBlue().contains(player.getUniqueId())) {
+                    main.getTeamManager().processToTeam("blue", player);
                 } else {
-                    MapManager.teleportToSpawn(player);
+                    main.getMapManager().teleportToSpawn(player);
                 }
             }
         }.runTaskLaterAsynchronously(Main.getInstance(), 10);

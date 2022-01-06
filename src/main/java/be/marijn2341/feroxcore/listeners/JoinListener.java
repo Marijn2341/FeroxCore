@@ -1,9 +1,10 @@
 package be.marijn2341.feroxcore.listeners;
 
+import be.marijn2341.feroxcore.Main;
 import be.marijn2341.feroxcore.database.Database;
+import be.marijn2341.feroxcore.manager.DataManager;
 import be.marijn2341.feroxcore.manager.inventorysettings.ItemStackSerializer;
 import be.marijn2341.feroxcore.manager.MapManager;
-import be.marijn2341.feroxcore.manager.PlayerManager;
 import be.marijn2341.feroxcore.manager.TeamManager;
 import be.marijn2341.feroxcore.utils.Utils;
 import com.nametagedit.plugin.NametagEdit;
@@ -14,6 +15,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class JoinListener implements Listener {
+
+    private Main main = Main.getInstance();
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
@@ -26,17 +29,17 @@ public class JoinListener implements Listener {
         NametagEdit.getApi().setPrefix(player, "&3&7");
 
         // CHECK IF USER IS IN DATABASE, IF NOT, INSERT USER
-        if (!(Database.checkIfUserExists(player.getUniqueId()))) {
-            Database.insertNewUser(player.getUniqueId());
+        if (!(main.getDb().checkIfUserExists(player.getUniqueId()))) {
+            main.getDb().insertNewUser(player.getUniqueId());
         }
 
-        if (!(Database.inventoryPlayerExists(player))) {
-            String inv = ItemStackSerializer.serialize(PlayerManager.DEFAULTITEMS.toArray(new ItemStack[0]));
-            Database.setInventory(player, inv);
+        if (!(main.getDb().inventoryPlayerExists(player))) {
+            String inv = main.getSerializer().serialize(main.getDataManager().getDefaultItems().toArray(new ItemStack[0]));
+            main.getDb().setInventory(player, inv);
         }
 
         // TELEPORT PLAYER TO SPAWN
-        MapManager.teleportToSpawn(player);
+        main.getMapManager().teleportToSpawn(player);
         player.sendMessage(Utils.color("&9--- &9&lFerox&f&lMC &9---"));
         player.sendMessage(Utils.color("&7Welcome on &9Ferox&fMC&9."));
         player.sendMessage(Utils.color("&7If you want to know how this game works, &9click here&7. (does not work yet)"));
@@ -44,8 +47,8 @@ public class JoinListener implements Listener {
         player.sendMessage(Utils.color("&9----------------"));
 
         // START A GAME WHEN THERE IS MIN. 1 PLAYER ON THE SERVER
-        if (TeamManager.countOnlinePlayers() == 1) {
-            MapManager.startGame();
+        if (main.getTeamManager().countOnlinePlayers() == 1) {
+            main.getMapManager().startGame();
         }
     }
 }

@@ -1,11 +1,7 @@
 package be.marijn2341.feroxcore.manager;
 
 import be.marijn2341.feroxcore.database.Database;
-import be.marijn2341.feroxcore.listeners.ArrowShootListener;
-import be.marijn2341.feroxcore.listeners.BlockPlaceListener;
-import be.marijn2341.feroxcore.listeners.DeathListener;
 import be.marijn2341.feroxcore.Main;
-import be.marijn2341.feroxcore.manager.inventorysettings.ItemStackSerializer;
 import be.marijn2341.feroxcore.manager.statistics.GameStatistics;
 import be.marijn2341.feroxcore.manager.statistics.PlayerStatistics;
 import be.marijn2341.feroxcore.utils.ItemStacks;
@@ -23,54 +19,52 @@ import java.util.concurrent.TimeUnit;
 
 public class MapManager {
 
-    public static ArrayList<String> MAPS = new ArrayList<>();
-    public static ArrayList<String> PREVIOUSMAP = new ArrayList<>();
     private static Date GAMESTARTEDAT = null;
     public static boolean GAMEACTIVE = false;
-    public static HashMap<String, String> CURRENTMAP = new HashMap<>();
-    public static HashMap<String, Location> AREAS = new HashMap<>();
-    public static HashMap<String, Location> LOBBY = new HashMap<>();
 
     public static int KILLS = 0;
     public static int DEATHS = 0;
     public static int ARROWSSHOT = 0;
     public static int ARROWSHIT = 0;
 
+    private Main main = Main.getInstance();
 
-    public static void loadMaps() {
-        MAPS.clear();
+
+    public void loadMaps() {
+        main.getDataManager().getMaps().clear();
         if (Main.getInstance().getWorldsConfig().get("worlds") == null) {
             Bukkit.getConsoleSender().sendMessage(ChatColor.DARK_RED + "No maps to load.");
             return;
         }
         for (String map : Main.getInstance().getWorldsConfig().getConfigurationSection("worlds").getKeys(false)) {
-            MAPS.add(map);
+            main.getDataManager().getMaps().add(map);
         }
-        Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + MAPS.toString() + " Loaded");
+        Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + main.getDataManager().getMaps().toString() + " Loaded");
     }
 
-    public static void teleportToSpawn(Player player) {
+    public void teleportToSpawn(Player player) {
 
         player.setGameMode(GameMode.ADVENTURE);
 
-        player.teleport(LOBBY.get("lobby"));
+        player.teleport(main.getDataManager().getLobby().get("lobby"));
         player.setHealth(20);
         player.setFoodLevel(20);
 
         NametagEdit.getApi().setPrefix(player, "&3&7");
 
         // FIX SCOREBOARD
-        ScoreboardManager.getLobbyScoreboard(player);
+        ScoreboardManager sbmanager = new ScoreboardManager();
+        sbmanager.getLobbyScoreboard(player);
 
         // FIX PLAYER INVENTORY
-        TeamManager.ClearInventory(player);
+        main.getTeamManager().ClearInventory(player);
         ItemStacks is = new ItemStacks();
         player.getInventory().setItem(4, is.compass());
         player.getInventory().setItem(8, is.playerSkull(player));
     }
 
     // CHECK IF THERE IS A CURRENT GAME ACTIVE
-    public static boolean isGameActive() {
+    public boolean isGameActive() {
         for (World w : Bukkit.getWorlds()) {
             if (w.getName().contains("_activegame")) {
                 return true;
@@ -79,35 +73,35 @@ public class MapManager {
         return false;
     }
 
-    public static void startGame() {
+    public void startGame() {
         if (!(isGameActive())) {
-            TeamManager.clearTeams();
+            main.getTeamManager().clearTeams();
             String newworld = getRandomWorld();
             Main.wm.cloneWorld(newworld, newworld + "_activegame");
             Main.wm.getMVWorld(newworld + "_activegame").setAlias(newworld + "_activegame");
-            CURRENTMAP.put("current", newworld);
+            main.getDataManager().getCurrentMap().put("current", newworld);
 
             loadSpawnPoints("red");
             loadSpawnPoints("blue");
 
-            NexusManager.countNexuses();
+            main.getNexusManager().countNexuses();
 
-            DeathListener.KILLS.clear();
-            DeathListener.DEATHS.clear();
-            DeathListener.ARROWSHIT.clear();
-            ArrowShootListener.SHOT.clear();
-            BlockPlaceListener.BLOCKS.put("placed", 0);
-            BlockPlaceListener.BLOCKS.put("broken", 0);
+            main.getDataManager().getKills().clear();
+            main.getDataManager().getDeaths().clear();
+            main.getDataManager().getArrowsHit().clear();
+            main.getDataManager().getArrowsShot().clear();
+            main.getDataManager().getBlocks().put("placed", 0);
+            main.getDataManager().getBlocks().put("broken", 0);
 
             KILLS = 0;
             DEATHS = 0;
             ARROWSHIT = 0;
             ARROWSSHOT = 0;
 
-            AREAS.put("redarea1", getSpawnArea1("red"));
-            AREAS.put("redarea2", getSpawnArea2("red"));
-            AREAS.put("bluearea1", getSpawnArea1("blue"));
-            AREAS.put("bluearea2", getSpawnArea2("blue"));
+            main.getDataManager().getAreas().put("redarea1", getSpawnArea1("red"));
+            main.getDataManager().getAreas().put("redarea2", getSpawnArea2("red"));
+            main.getDataManager().getAreas().put("bluearea1", getSpawnArea1("blue"));
+            main.getDataManager().getAreas().put("bluearea2", getSpawnArea2("blue"));
 
             Bukkit.broadcastMessage(Utils.color("&9--- &9&lFerox&f&lMC &9---"));
             Bukkit.broadcastMessage(Utils.color("&9New map started: &f" + newworld + "&9."));
@@ -118,98 +112,101 @@ public class MapManager {
         }
     }
 
-    public static void ForceDeleteGame() {
+    public void ForceDeleteGame() {
         for (World w : Bukkit.getWorlds()) {
             if (w.getName().contains("_activegame")) {
-                PREVIOUSMAP.add(w.getName());
+                main.getDataManager().getPreviousMap().add(w.getName());
                 Main.wm.deleteWorld(w.getName());
             }
         }
     }
 
-    public static void EndGame(String winner) {
+    public void EndGame(String winner) {
         for (World w : Bukkit.getWorlds()) {
             if (w.getName().contains("_activegame")) {
+                PlayerStatistics playerstats = new PlayerStatistics();
+                GameStatistics gamestats = new GameStatistics();
 
                 String matchtijd = getMatchTime();
 
-                TeamManager.WINNERS.forEach(uuid -> {
+                main.getDataManager().getWinners().forEach(uuid -> {
                     Player plr = Bukkit.getPlayer(uuid);
                     plr.setGameMode(GameMode.SPECTATOR);
                     Utils.sendTitle(plr, "&6&lVictory", "&7Your team won the game.", 5, 100, 5);
 
                     // ADD WIN TO DATABASE
-                    Database.setWins(uuid, 1);
-                    PlayerStatistics.updateStats(uuid);
+                    main.getDb().setWins(uuid, 1);
+                    playerstats.updateStats(uuid);
 
-                    KILLS = KILLS + DeathListener.KILLS.get(plr.getUniqueId());
-                    DEATHS = DEATHS + DeathListener.DEATHS.get(plr.getUniqueId());
-                    ARROWSSHOT = ARROWSSHOT + ArrowShootListener.SHOT.get(plr.getUniqueId());
-                    ARROWSHIT = ARROWSHIT + DeathListener.ARROWSHIT.get(plr.getUniqueId());
+                    KILLS = KILLS + main.getDataManager().getKills().get(plr.getUniqueId());
+                    DEATHS = DEATHS + main.getDataManager().getDeaths().get(plr.getUniqueId());
+                    ARROWSSHOT = ARROWSSHOT + main.getDataManager().getArrowsShot().get(plr.getUniqueId());
+                    ARROWSHIT = ARROWSHIT + main.getDataManager().getArrowsHit().get(plr.getUniqueId());
 
                     // SEND STATS TO PLAYERS
-                    GameStatistics.sendGameStats(plr, matchtijd);
+                    gamestats.sendGameStats(plr, matchtijd);
                 });
 
-                TeamManager.LOSERS.forEach(uuid -> {
+                main.getDataManager().getLosers().forEach(uuid -> {
                     Player plr = Bukkit.getPlayer(uuid);
                     plr.setGameMode(GameMode.SPECTATOR);
                     Utils.sendTitle(plr, "&c&lLost", "&7Your team lost the game.", 5, 100, 5);
 
                     // ADD LOSE TO DATABASE
-                    Database.setLoses(uuid, 1);
+                    main.getDb().setLoses(uuid, 1);
                     // ADD PLAYER STATS TO DATABASE
-                    PlayerStatistics.updateStats(uuid);
+                    playerstats.updateStats(uuid);
 
-                    KILLS = KILLS + DeathListener.KILLS.get(plr.getUniqueId());
-                    DEATHS = DEATHS + DeathListener.DEATHS.get(plr.getUniqueId());
-                    ARROWSSHOT = ARROWSSHOT + ArrowShootListener.SHOT.get(plr.getUniqueId());
-                    ARROWSHIT = ARROWSHIT + DeathListener.ARROWSHIT.get(plr.getUniqueId());
+                    KILLS = KILLS + main.getDataManager().getKills().get(plr.getUniqueId());
+                    DEATHS = DEATHS + main.getDataManager().getDeaths().get(plr.getUniqueId());
+                    ARROWSSHOT = ARROWSSHOT + main.getDataManager().getArrowsShot().get(plr.getUniqueId());
+                    ARROWSHIT = ARROWSHIT + main.getDataManager().getArrowsHit().get(plr.getUniqueId());
 
                     // SEND STATS TO PLAYERS
-                    GameStatistics.sendGameStats(plr, matchtijd);
+                    gamestats.sendGameStats(plr, matchtijd);
                 });
 
                 if (!(winner.equalsIgnoreCase("null"))) {
-                    TeamManager.SPECTATORS.forEach(uuid -> {
+                    main.getDataManager().getSpectators().forEach(uuid -> {
                         Player plr = Bukkit.getPlayer(uuid);
                         Utils.sendTitle(plr, "&6" + winner + " &7won the game!", "", 5, 80, 25);
                     });
                 }
 
                 // ADD GAME STATS TO DATABASE
-                Database.insertMapStats(CURRENTMAP.get("current"), BlockPlaceListener.BLOCKS.get("placed"), BlockPlaceListener.BLOCKS.get("broken"),
+                main.getDb().insertMapStats(main.getDataManager().getCurrentMap().get("current"), main.getDataManager().getBlocks().get("placed"), main.getDataManager().getBlocks().get("broken"),
                         getMatchTimeMi(), winner, KILLS, DEATHS, ARROWSSHOT, ARROWSHIT);
 
                 GAMEACTIVE = false;
 
-                TeamManager.LOSERS.clear();
-                TeamManager.WINNERS.clear();
-                TeamManager.clearTeams();
-                NexusManager.REDNEXUSESLOC.clear();
-                NexusManager.BLUENEXUSESLOC.clear();
-                NexusManager.REDNEXUSESLOCTOTAL.clear();
-                NexusManager.BLUENEXUSESLOCTOTAL.clear();
-                TeamManager.SPAWNPOINTS.clear();
+                main.getDataManager().getLosers().clear();
+                main.getDataManager().getWinners().clear();
+                main.getTeamManager().clearTeams();
+                main.getDataManager().getRedNexusesLoc().clear();
+                main.getDataManager().getBlueNexusesLoc().clear();
+                main.getDataManager().getRedNexusesLocTotal().clear();
+                main.getDataManager().getBlueNexusesLocTotal().clear();
+                main.getDataManager().getSpawnPoints().clear();
+                main.getDataManager().getInventories().clear();
 
                 GAMESTARTEDAT = null;
 
                 new BukkitRunnable() {
                     @Override
                     public void run() {
-                        for (UUID uuid : TeamManager.PLAYERS) {
+                        for (UUID uuid : main.getDataManager().getPlayers()) {
                             Player plr = Bukkit.getPlayer(uuid);
                             teleportToSpawn(plr);
-                            PREVIOUSMAP.clear();
+                            main.getDataManager().getPreviousMap().clear();
                             String wereld = w.getName().substring(0, w.getName().length()-11);
-                            PREVIOUSMAP.add(wereld);
+                            main.getDataManager().getPreviousMap().add(wereld);
                             Main.wm.deleteWorld(w.getName());
 
                             new BukkitRunnable() {
                                 @Override
                                 public void run() {
                                     startGame();
-                                    TeamManager.PLAYERS.clear();
+                                    main.getDataManager().getPlayers().clear();
                                 }
                             }.runTaskLater(Main.getInstance(), 40);
                         }
@@ -219,26 +216,26 @@ public class MapManager {
         }
     }
 
-    public static String getRandomWorld() {
-        if (MAPS.isEmpty()) {
+    public String getRandomWorld() {
+        if (main.getDataManager().getMaps().isEmpty()) {
             loadMaps();
         }
-        if (!(PREVIOUSMAP.isEmpty())) {
-            MAPS.remove(PREVIOUSMAP.get(0));
-            if (MAPS.isEmpty()) {
+        if (!(main.getDataManager().getPreviousMap().isEmpty())) {
+            main.getDataManager().getMaps().remove(main.getDataManager().getPreviousMap().get(0));
+            if (main.getDataManager().getMaps().isEmpty()) {
                 loadMaps();
-                MAPS.remove(PREVIOUSMAP.get(0));
+                main.getDataManager().getMaps().remove(main.getDataManager().getPreviousMap().get(0));
             }
-            MAPS.remove(PREVIOUSMAP.get(0));
-            String map = MAPS.get(new Random().nextInt(MAPS.size()));
+            main.getDataManager().getMaps().remove(main.getDataManager().getPreviousMap().get(0));
+            String map = main.getDataManager().getMaps().get(new Random().nextInt(main.getDataManager().getMaps().size()));
             return map;
         }
-        String map = MAPS.get(new Random().nextInt(MAPS.size()));
-        MAPS.remove(map);
+        String map = main.getDataManager().getMaps().get(new Random().nextInt(main.getDataManager().getMaps().size()));
+        main.getDataManager().getMaps().remove(map);
         return map;
     }
 
-    public static String getMatchTime() {
+    public String getMatchTime() {
         long milliseconds = new Date().getTime() - GAMESTARTEDAT.getTime();
         long seconds = TimeUnit.MILLISECONDS.toSeconds(milliseconds);
         long hours = TimeUnit.SECONDS.toHours(seconds);
@@ -247,19 +244,18 @@ public class MapManager {
         return tijd;
     }
 
-    public static long getMatchTimeMi() {
+    public long getMatchTimeMi() {
         long milliseconds = new Date().getTime() - GAMESTARTEDAT.getTime();
         return milliseconds;
     }
 
-    public static void collectItems(Player player) {
-        String inv = Database.getInventory(player);
-        ItemStack[] is = ItemStackSerializer.deserialize(inv);
+    public void collectItems(Player player) {
+        ItemStack[] is = main.getDataManager().getInventories().get(player.getUniqueId());
         player.getInventory().setContents(is);
         player.updateInventory();
     }
 
-    public static void collectArmor(Player player, Color c) {
+    public void collectArmor(Player player, Color c) {
 
         ItemStack helmet = new ItemStack(Material.LEATHER_HELMET);
         ItemStack chest = new ItemStack(Material.CHAINMAIL_CHESTPLATE);
@@ -281,26 +277,26 @@ public class MapManager {
     }
 
     // ONLY LOADS WHEN A MAP STARTS.
-    public static void loadSpawnPoints(String team) {
+    public void loadSpawnPoints(String team) {
         FileConfiguration config = Main.getInstance().getWorldsConfig();
-        World world = Bukkit.getWorld(MapManager.CURRENTMAP.get("current") + "_activegame");
-        double x = config.getDouble("worlds." + MapManager.CURRENTMAP.get("current") + ".spawnpoints." +
+        World world = Bukkit.getWorld(main.getDataManager().getCurrentMap().get("current") + "_activegame");
+        double x = config.getDouble("worlds." + main.getDataManager().getCurrentMap().get("current") + ".spawnpoints." +
                 team + ".x");
-        double y = config.getDouble("worlds." + MapManager.CURRENTMAP.get("current") + ".spawnpoints." +
+        double y = config.getDouble("worlds." + main.getDataManager().getCurrentMap().get("current") + ".spawnpoints." +
                 team + ".y");
-        double z = config.getDouble("worlds." + MapManager.CURRENTMAP.get("current") + ".spawnpoints." +
+        double z = config.getDouble("worlds." + main.getDataManager().getCurrentMap().get("current") + ".spawnpoints." +
                 team + ".z");
-        float yaw = (float) config.getDouble("worlds." + MapManager.CURRENTMAP.get("current") + ".spawnpoints." +
+        float yaw = (float) config.getDouble("worlds." + main.getDataManager().getCurrentMap().get("current") + ".spawnpoints." +
                 team + ".yaw");
-        float pitch = (float) config.getDouble("worlds." + MapManager.CURRENTMAP.get("current") + ".spawnpoints." +
+        float pitch = (float) config.getDouble("worlds." + main.getDataManager().getCurrentMap().get("current") + ".spawnpoints." +
                 team + ".pitch");
         Location loc = new Location(world, x, y, z, yaw, pitch);
 
-        TeamManager.SPAWNPOINTS.put(team, loc);
+        main.getDataManager().getSpawnPoints().put(team, loc);
     }
 
     // LETS TRUST LUC CODE ;)
-    public static Boolean iswithin(Location original, Location loc1, Location loc2) {
+    public Boolean iswithin(Location original, Location loc1, Location loc2) {
         double xMin, yMin, zMin;
         double xMax, yMax, zMax;
         if (loc1.getX() > loc2.getX()) {
@@ -334,16 +330,16 @@ public class MapManager {
         return false;
     }
 
-    public static Location getSpawnArea1(String team) {
+    public Location getSpawnArea1(String team) {
         FileConfiguration config = Main.getInstance().getWorldsConfig();
-        World game = Bukkit.getWorld(MapManager.CURRENTMAP.get("current") + "_activegame");
+        World game = Bukkit.getWorld(main.getDataManager().getCurrentMap().get("current") + "_activegame");
 
         // GET COORDINATES
-        double x = config.getDouble("worlds." + MapManager.CURRENTMAP.get("current") + ".spawnpoints." +
+        double x = config.getDouble("worlds." + main.getDataManager().getCurrentMap().get("current") + ".spawnpoints." +
                 team + ".x");
-        double y = config.getDouble("worlds." + MapManager.CURRENTMAP.get("current") + ".spawnpoints." +
+        double y = config.getDouble("worlds." + main.getDataManager().getCurrentMap().get("current") + ".spawnpoints." +
                 team + ".y");
-        double z = config.getDouble("worlds." + MapManager.CURRENTMAP.get("current") + ".spawnpoints." +
+        double z = config.getDouble("worlds." + main.getDataManager().getCurrentMap().get("current") + ".spawnpoints." +
                 team + ".z");
 
         // SET AREA 1
@@ -356,16 +352,16 @@ public class MapManager {
         return area1;
     }
 
-    public static Location getSpawnArea2(String team) {
+    public Location getSpawnArea2(String team) {
         FileConfiguration config = Main.getInstance().getWorldsConfig();
-        World game = Bukkit.getWorld(MapManager.CURRENTMAP.get("current") + "_activegame");
+        World game = Bukkit.getWorld(main.getDataManager().getCurrentMap().get("current") + "_activegame");
 
         // GET COORDINATES
-        double x = config.getDouble("worlds." + MapManager.CURRENTMAP.get("current") + ".spawnpoints." +
+        double x = config.getDouble("worlds." + main.getDataManager().getCurrentMap().get("current") + ".spawnpoints." +
                 team + ".x");
-        double y = config.getDouble("worlds." + MapManager.CURRENTMAP.get("current") + ".spawnpoints." +
+        double y = config.getDouble("worlds." + main.getDataManager().getCurrentMap().get("current") + ".spawnpoints." +
                 team + ".y");
-        double z = config.getDouble("worlds." + MapManager.CURRENTMAP.get("current") + ".spawnpoints." +
+        double z = config.getDouble("worlds." + main.getDataManager().getCurrentMap().get("current") + ".spawnpoints." +
                 team + ".z");
 
         // SET AREA 2
@@ -377,9 +373,9 @@ public class MapManager {
         return area2;
     }
 
-    public static void loadLobby() {
-        if (!(LOBBY.isEmpty())) {
-            LOBBY.clear();
+    public void loadLobby() {
+        if (!(main.getDataManager().getLobby().isEmpty())) {
+            main.getDataManager().getLobby().clear();
         }
         FileConfiguration config = Main.getInstance().getWorldsConfig();
         World lobby = Bukkit.getWorld(config.getString("lobby.world"));
@@ -389,6 +385,6 @@ public class MapManager {
         float yaw = (float) config.getDouble("lobby.yaw");
         float pitch = (float) config.getDouble("lobby.pitch");
         Location loc = new Location(lobby, x, y, z, yaw, pitch);
-        MapManager.LOBBY.put("lobby", loc);
+        main.getDataManager().getLobby().put("lobby", loc);
     }
 }

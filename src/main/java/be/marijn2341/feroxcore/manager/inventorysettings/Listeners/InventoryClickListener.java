@@ -1,5 +1,6 @@
 package be.marijn2341.feroxcore.manager.inventorysettings.Listeners;
 
+import be.marijn2341.feroxcore.Main;
 import be.marijn2341.feroxcore.database.Database;
 import be.marijn2341.feroxcore.manager.inventorysettings.ItemStackSerializer;
 import be.marijn2341.feroxcore.utils.Utils;
@@ -17,6 +18,8 @@ import java.util.ArrayList;
 
 public class InventoryClickListener implements Listener {
 
+    private Main main = Main.getInstance();
+
     @EventHandler
     public void onClick(InventoryClickEvent e) {
         Player player = (Player) e.getWhoClicked();
@@ -28,7 +31,7 @@ public class InventoryClickListener implements Listener {
             if (e.getClickedInventory().getItem(e.getSlot()) == null) return;
 
             if (e.getSlot() == 13) {
-                Gui.editInventory(player);
+                main.getGui().editInventory(player);
             }
         }
 
@@ -76,8 +79,9 @@ public class InventoryClickListener implements Listener {
                     ItemStack item = player.getOpenInventory().getItem(i);
                     itemstack.add(item);
                 }
-                String inv = ItemStackSerializer.serialize(itemstack.toArray(new ItemStack[0]));
-                Database.updateInventory(player, inv);
+                ItemStackSerializer serializer = Main.getInstance().getSerializer();
+                String inv = serializer.serialize(itemstack.toArray(new ItemStack[0]));
+                main.getDb().updateInventory(player, inv);
                 player.closeInventory();
                 player.sendMessage(Utils.color("&aSaved inventory.."));
                 return;

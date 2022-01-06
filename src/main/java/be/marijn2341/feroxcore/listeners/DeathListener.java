@@ -1,6 +1,7 @@
 package be.marijn2341.feroxcore.listeners;
 
 import be.marijn2341.feroxcore.Main;
+import be.marijn2341.feroxcore.manager.DataManager;
 import be.marijn2341.feroxcore.manager.MapManager;
 import be.marijn2341.feroxcore.manager.TeamManager;
 import be.marijn2341.feroxcore.utils.Utils;
@@ -20,11 +21,7 @@ import java.util.*;
 
 public class DeathListener implements Listener {
 
-    public static HashMap<UUID, Integer> DEATHS = new HashMap<>();
-    public static HashMap<UUID, Integer> KILLS = new HashMap<>();
-    public static HashMap<Player, BukkitTask> QUEUE = new HashMap<>();
-    public static HashMap<Player, Player> LASTDAMAGER = new HashMap<>();
-    public static HashMap<UUID, Integer> ARROWSHIT = new HashMap<>();
+    private Main main = Main.getInstance();
 
     @EventHandler
     public void ondeath(PlayerDeathEvent e) {
@@ -41,7 +38,7 @@ public class DeathListener implements Listener {
 
         List<ItemStack> list = e.getDrops();
         Iterator<ItemStack> i = list.iterator();
-        if (TeamManager.AllreadyInTeam(deathplayer)) {
+        if (main.getTeamManager().AllreadyInTeam(deathplayer)) {
             while (i.hasNext()) {
                 ItemStack drop = i.next();
                 if (drop.getType() == Material.LEATHER_BOOTS ||
@@ -64,7 +61,7 @@ public class DeathListener implements Listener {
         // REMOVE ITEMS WHEN PLAYER DIED (SPAWN)
         // ------------------------------
 
-        if (!(TeamManager.AllreadyInTeam(deathplayer))) {
+        if (!(main.getTeamManager().AllreadyInTeam(deathplayer))) {
             while (i.hasNext()) {
                 ItemStack drop = i.next();
                 if (drop.getType() == Material.COMPASS ||
@@ -77,7 +74,7 @@ public class DeathListener implements Listener {
             return;
         }
 
-        DEATHS.put(deathplayer.getUniqueId(), DEATHS.get(deathplayer.getUniqueId()) + 1);
+        main.getDataManager().getDeaths().put(deathplayer.getUniqueId(), main.getDataManager().getDeaths().get(deathplayer.getUniqueId()) + 1);
 
 
         // ------------------------------
@@ -87,18 +84,18 @@ public class DeathListener implements Listener {
         if (e.getEntity().getLastDamageCause() instanceof EntityDamageByBlockEvent) {
             EntityDamageByBlockEvent cause = (EntityDamageByBlockEvent) e.getEntity().getLastDamageCause();
             if (cause.getCause() == EntityDamageEvent.DamageCause.CONTACT) {
-                if (LASTDAMAGER.containsKey(deathplayer)) {
-                    Player killer = LASTDAMAGER.get(deathplayer);
-                    e.setDeathMessage(Utils.color("&" + TeamManager.GetTeamColor(deathplayer) +
-                            deathplayer.getName() + " &7got knocked into a cactus by &" + TeamManager.GetTeamColor(killer) + killer.getName() +
+                if (main.getDataManager().getLastDamager().containsKey(deathplayer)) {
+                    Player killer = main.getDataManager().getLastDamager().get(deathplayer);
+                    e.setDeathMessage(Utils.color("&" + main.getTeamManager().GetTeamColor(deathplayer) +
+                            deathplayer.getName() + " &7got knocked into a cactus by &" + main.getTeamManager().GetTeamColor(killer) + killer.getName() +
                             "&7."));
                     // ADD KILL TO KILLER
-                    KILLS.put(killer.getUniqueId(), KILLS.get(killer.getUniqueId()) + 1);
+                    main.getDataManager().getKills().put(killer.getUniqueId(), main.getDataManager().getKills().get(killer.getUniqueId()) + 1);
                     // REMOVE PLAYER FROM HASHMAP
-                    LASTDAMAGER.remove(deathplayer);
+                    main.getDataManager().getLastDamager().remove(deathplayer);
                     return;
                 } else {
-                    e.setDeathMessage(Utils.color("&" + TeamManager.GetTeamColor(deathplayer) +
+                    e.setDeathMessage(Utils.color("&" + main.getTeamManager().GetTeamColor(deathplayer) +
                             deathplayer.getName() + " &7got rekt by a cactus!"));
                     return;
                 }
@@ -111,18 +108,18 @@ public class DeathListener implements Listener {
 
             EntityDamageEvent cause2 = e.getEntity().getLastDamageCause();
             if (cause2.getCause() == EntityDamageEvent.DamageCause.FALL) {
-                if (LASTDAMAGER.containsKey(deathplayer)) {
-                    Player killer = LASTDAMAGER.get(deathplayer);
-                    e.setDeathMessage(Utils.color("&" + TeamManager.GetTeamColor(deathplayer) +
-                            deathplayer.getName() + " &7got knocked to the ground by &" + TeamManager.GetTeamColor(killer) + killer.getName() +
+                if (main.getDataManager().getLastDamager().containsKey(deathplayer)) {
+                    Player killer = main.getDataManager().getLastDamager().get(deathplayer);
+                    e.setDeathMessage(Utils.color("&" + main.getTeamManager().GetTeamColor(deathplayer) +
+                            deathplayer.getName() + " &7got knocked to the ground by &" + main.getTeamManager().GetTeamColor(killer) + killer.getName() +
                             "&7."));
                     // ADD KILL TO KILLER
-                    KILLS.put(killer.getUniqueId(), KILLS.get(killer.getUniqueId()) + 1);
+                    main.getDataManager().getKills().put(killer.getUniqueId(), main.getDataManager().getKills().get(killer.getUniqueId()) + 1);
                     // REMOVE PLAYER FROM HASHMAP
-                    LASTDAMAGER.remove(deathplayer);
+                    main.getDataManager().getLastDamager().remove(deathplayer);
                     return;
                 } else {
-                    e.setDeathMessage(Utils.color("&" + TeamManager.GetTeamColor(deathplayer) +
+                    e.setDeathMessage(Utils.color("&" + main.getTeamManager().GetTeamColor(deathplayer) +
                             deathplayer.getName() + " &7wanted to kiss the ground!"));
                     return;
                 }
@@ -136,18 +133,18 @@ public class DeathListener implements Listener {
             if (e.getEntity().getLastDamageCause() instanceof EntityDamageByBlockEvent) {
                 EntityDamageByBlockEvent cause = (EntityDamageByBlockEvent) e.getEntity().getLastDamageCause();
                 if (cause.getCause() == EntityDamageEvent.DamageCause.VOID) {
-                    if (LASTDAMAGER.containsKey(deathplayer)) {
-                        Player killer = LASTDAMAGER.get(deathplayer);
-                        e.setDeathMessage(Utils.color("&" + TeamManager.GetTeamColor(deathplayer) +
-                                deathplayer.getName() + " &7got knocked into the void by &" + TeamManager.GetTeamColor(killer) + killer.getName() +
+                    if (main.getDataManager().getLastDamager().containsKey(deathplayer)) {
+                        Player killer = main.getDataManager().getLastDamager().get(deathplayer);
+                        e.setDeathMessage(Utils.color("&" + main.getTeamManager().GetTeamColor(deathplayer) +
+                                deathplayer.getName() + " &7got knocked into the void by &" + main.getTeamManager().GetTeamColor(killer) + killer.getName() +
                                 "&7."));
                         // ADD KILL TO KILLER
-                        KILLS.put(killer.getUniqueId(), KILLS.get(killer.getUniqueId()) + 1);
+                        main.getDataManager().getKills().put(killer.getUniqueId(), main.getDataManager().getKills().get(killer.getUniqueId()) + 1);
                         // REMOVE PLAYER FROM HASHMAP
-                        LASTDAMAGER.remove(deathplayer);
+                        main.getDataManager().getLastDamager().remove(deathplayer);
                         return;
                     } else {
-                        e.setDeathMessage(Utils.color("&" + TeamManager.GetTeamColor(deathplayer) + deathplayer.getName() + " &7died in the void."));
+                        e.setDeathMessage(Utils.color("&" + main.getTeamManager().GetTeamColor(deathplayer) + deathplayer.getName() + " &7died in the void."));
                         return;
                     }
                 }
@@ -164,9 +161,9 @@ public class DeathListener implements Listener {
                         Arrow arrow = (Arrow) cause.getDamager();
                         if (arrow.getShooter() instanceof Player) {
                             Player shooter = (Player) arrow.getShooter();
-                            e.setDeathMessage(Utils.color("&" + TeamManager.GetTeamColor(deathplayer) + deathplayer.getName() + " &7got shot by &" +
-                                    TeamManager.GetTeamColor(shooter) + shooter.getName() + "&7."));
-                            KILLS.put(shooter.getUniqueId(), KILLS.get(shooter.getUniqueId()) + 1);
+                            e.setDeathMessage(Utils.color("&" + main.getTeamManager().GetTeamColor(deathplayer) + deathplayer.getName() + " &7got shot by &" +
+                                    main.getTeamManager().GetTeamColor(shooter) + shooter.getName() + "&7."));
+                            main.getDataManager().getKills().put(shooter.getUniqueId(), main.getDataManager().getKills().get(shooter.getUniqueId()) + 1);
                             return;
                         }
                     }
@@ -179,13 +176,13 @@ public class DeathListener implements Listener {
 
             if (deathplayer.getKiller() != null) {
                 Player killer = deathplayer.getKiller();
-                if (TeamManager.TEAMBLUE.contains(killer.getUniqueId()) || TeamManager.TEAMRED.contains(killer.getUniqueId())) {
-                    e.setDeathMessage(Utils.color("&" + TeamManager.GetTeamColor(deathplayer) + deathplayer.getName() + " &7got killed by &" + TeamManager.GetTeamColor(killer) + killer.getName() + "&7."));
+                if (main.getDataManager().getTeamBlue().contains(killer.getUniqueId()) || main.getDataManager().getTeamRed().contains(killer.getUniqueId())) {
+                    e.setDeathMessage(Utils.color("&" + main.getTeamManager().GetTeamColor(deathplayer) + deathplayer.getName() + " &7got killed by &" + main.getTeamManager().GetTeamColor(killer) + killer.getName() + "&7."));
                     // ADD KILL TO KILLER
-                    KILLS.put(killer.getUniqueId(), KILLS.get(killer.getUniqueId()) + 1);
+                    main.getDataManager().getKills().put(killer.getUniqueId(), main.getDataManager().getKills().get(killer.getUniqueId()) + 1);
 
-                    if (LASTDAMAGER.containsKey(deathplayer)) {
-                        LASTDAMAGER.remove(deathplayer);
+                    if (main.getDataManager().getLastDamager().containsKey(deathplayer)) {
+                        main.getDataManager().getLastDamager().remove(deathplayer);
                     }
                     return;
                 }
@@ -205,38 +202,38 @@ public class DeathListener implements Listener {
             if (e.getDamager() instanceof Arrow) {
                 Arrow arrow = (Arrow) e.getDamager();
                 Player hitter = (Player) arrow.getShooter();
-                if (TeamManager.AllreadyInTeam(hitter) && TeamManager.AllreadyInTeam(hitted)) {
-                    if (TeamManager.TEAMRED.contains(hitter.getUniqueId()) == TeamManager.TEAMRED.contains(hitted.getUniqueId())) {
+                if (main.getTeamManager().AllreadyInTeam(hitter) && main.getTeamManager().AllreadyInTeam(hitted)) {
+                    if (main.getDataManager().getTeamRed().contains(hitter.getUniqueId()) == main.getDataManager().getTeamRed().contains(hitted.getUniqueId())) {
                         return;
                     }
-                    if (TeamManager.TEAMBLUE.contains(hitter.getUniqueId()) == TeamManager.TEAMBLUE.contains(hitted.getUniqueId())) {
+                    if (main.getDataManager().getTeamBlue().contains(hitter.getUniqueId()) == main.getDataManager().getTeamBlue().contains(hitted.getUniqueId())) {
                         return;
                     }
-                    ARROWSHIT.put(hitter.getUniqueId(), ARROWSHIT.get(hitter.getUniqueId()) + 1);
-                    LASTDAMAGER.put(hitted, hitter);
+                    main.getDataManager().getArrowsHit().put(hitter.getUniqueId(), main.getDataManager().getArrowsHit().get(hitter.getUniqueId()) + 1);
+                    main.getDataManager().getLastDamager().put(hitted, hitter);
                 }
             } else {
                 Player hitter = (Player) e.getDamager();
-                if (TeamManager.AllreadyInTeam(hitter) && TeamManager.AllreadyInTeam(hitted)) {
-                    if (TeamManager.TEAMRED.contains(hitter.getUniqueId()) == TeamManager.TEAMRED.contains(hitted.getUniqueId())) {
+                if (main.getTeamManager().AllreadyInTeam(hitter) && main.getTeamManager().AllreadyInTeam(hitted)) {
+                    if (main.getDataManager().getTeamRed().contains(hitter.getUniqueId()) == main.getDataManager().getTeamRed().contains(hitted.getUniqueId())) {
                         return;
                     }
-                    if (TeamManager.TEAMBLUE.contains(hitter.getUniqueId()) == TeamManager.TEAMBLUE.contains(hitted.getUniqueId())) {
+                    if (main.getDataManager().getTeamBlue().contains(hitter.getUniqueId()) == main.getDataManager().getTeamBlue().contains(hitted.getUniqueId())) {
                         return;
                     }
-                    LASTDAMAGER.put(hitted, hitter);
+                    main.getDataManager().getLastDamager().put(hitted, hitter);
                 }
             }
 
 
-            if(QUEUE.get(hitted) != null){
-                QUEUE.get(hitted).cancel();
+            if(main.getDataManager().getQueue().get(hitted) != null){
+                main.getDataManager().getQueue().get(hitted).cancel();
             }
             BukkitTask br = new BukkitRunnable() {
-                public void run() {LASTDAMAGER.remove(hitted);
+                public void run() {main.getDataManager().getLastDamager().remove(hitted);
                 }
             }.runTaskLater(Main.getInstance(), 200);
-                QUEUE.put(hitted, br);
+            main.getDataManager().getQueue().put(hitted, br);
             }
     }
 
@@ -244,8 +241,8 @@ public class DeathListener implements Listener {
     public void onVoidDamage(EntityDamageByBlockEvent e) {
         if (e.getEntity() instanceof Player && e.getCause() == EntityDamageEvent.DamageCause.VOID) {
             Player damaged = (Player) e.getEntity();
-            if (damaged.getWorld().getName().equals(MapManager.LOBBY.get("lobby").getWorld().getName())) {
-                MapManager.teleportToSpawn(damaged);
+            if (damaged.getWorld().getName().equals(main.getDataManager().getLobby().get("lobby").getWorld().getName())) {
+                main.getMapManager().teleportToSpawn(damaged);
                 e.setCancelled(true);
                 return;
             }

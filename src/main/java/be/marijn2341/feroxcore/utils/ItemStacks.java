@@ -1,5 +1,6 @@
 package be.marijn2341.feroxcore.utils;
 
+import be.marijn2341.feroxcore.Main;
 import be.marijn2341.feroxcore.database.Database;
 import be.marijn2341.feroxcore.manager.PlayerManager;
 import org.bukkit.Material;
@@ -11,6 +12,8 @@ import org.bukkit.inventory.meta.SkullMeta;
 import java.util.ArrayList;
 
 public class ItemStacks {
+
+    private Main main = Main.getInstance();
 
     public ItemStack compass() {
         ItemStack compass = new ItemStack(Material.COMPASS);
@@ -87,7 +90,7 @@ public class ItemStacks {
 
     // Statistics
     public ItemStack playerKills(Player player) {
-        int kills = Database.getKillsDB(player.getUniqueId());
+        int kills = main.getDb().getKillsDB(player.getUniqueId());
 
         ArrayList<String> lore = new ArrayList<>();
         lore.add(Utils.color("&7You killed &8" + kills + " &7other players."));
@@ -101,7 +104,7 @@ public class ItemStacks {
     }
 
     public ItemStack playerDeaths(Player player) {
-        int deaths = Database.getDeathsDB(player.getUniqueId());
+        int deaths = main.getDb().getDeathsDB(player.getUniqueId());
 
         ArrayList<String> lore = new ArrayList<>();
         lore.add(Utils.color("&7You died &8" + deaths + " &7times."));
@@ -115,7 +118,7 @@ public class ItemStacks {
     }
 
     public ItemStack playerWins(Player player) {
-        int wins = Database.getWins(player.getUniqueId());
+        int wins = main.getDb().getWins(player.getUniqueId());
 
         ArrayList<String> lore = new ArrayList<>();
         lore.add(Utils.color("&7You won &8" + wins + " &7times."));
@@ -129,7 +132,7 @@ public class ItemStacks {
     }
 
     public ItemStack playerLoses(Player player) {
-        int loses = Database.getLoses(player.getUniqueId());
+        int loses = main.getDb().getLoses(player.getUniqueId());
 
         ArrayList<String> lore = new ArrayList<>();
         lore.add(Utils.color("&7You lost &8" + loses + " &7times."));
@@ -143,7 +146,7 @@ public class ItemStacks {
     }
 
     public ItemStack playerOnlineTime(Player player) {
-        String time = PlayerManager.getOnlineTime(player);
+        String time = main.getPlayerManager().getOnlineTime(player);
 
         ArrayList<String> lore = new ArrayList<>();
         lore.add(Utils.color("&7You played &8" + time + "&7 on this server."));
@@ -157,7 +160,7 @@ public class ItemStacks {
     }
 
     public ItemStack blocksWalked(Player player) {
-        long walked = PlayerManager.getWalkedBlocksPlayer(player);
+        long walked = main.getPlayerManager().getWalkedBlocksPlayer(player);
 
         ArrayList<String> lore = new ArrayList<>();
         lore.add(Utils.color("&7You've walked &8" + walked + " &7blocks."));
@@ -171,7 +174,7 @@ public class ItemStacks {
     }
 
     public ItemStack blocksSprinted(Player player) {
-        long sprinted = PlayerManager.getSprintedBlocksPlayer(player);
+        long sprinted = main.getPlayerManager().getSprintedBlocksPlayer(player);
 
         ArrayList<String> lore = new ArrayList<>();
         lore.add(Utils.color("&7You've sprinted &8" + sprinted + " &7blocks."));
@@ -185,7 +188,7 @@ public class ItemStacks {
     }
 
     public ItemStack timesJumped(Player player) {
-        long jumped = PlayerManager.getJumpsPlayer(player);
+        long jumped = main.getPlayerManager().getJumpsPlayer(player);
 
         ArrayList<String> lore = new ArrayList<>();
         lore.add(Utils.color("&7You've jumped &8" + jumped + "&7 times"));
@@ -199,7 +202,7 @@ public class ItemStacks {
     }
 
     public ItemStack nexusesBroken(Player player) {
-        int nexuses = Database.getBrokenNexuses(player.getUniqueId());
+        int nexuses = main.getDb().getBrokenNexuses(player.getUniqueId());
 
         ArrayList<String> lore = new ArrayList<>();
         lore.add(Utils.color("&7You broke &8" + nexuses + " &7nexuses."));
@@ -213,12 +216,12 @@ public class ItemStacks {
     }
 
     public ItemStack playerStatistics(Player player) {
-        int kills = Database.getKillsDB(player.getUniqueId());
-        int deaths = Database.getDeathsDB(player.getUniqueId());
-        int nexusesbroken = Database.getBrokenNexuses(player.getUniqueId());
-        int wins = Database.getWins(player.getUniqueId());
-        int loses = Database.getLoses(player.getUniqueId());
-        String time = PlayerManager.getOnlineTime(player);
+        int kills = main.getDb().getKillsDB(player.getUniqueId());
+        int deaths = main.getDb().getDeathsDB(player.getUniqueId());
+        int nexusesbroken = main.getDb().getBrokenNexuses(player.getUniqueId());
+        int wins = main.getDb().getWins(player.getUniqueId());
+        int loses = main.getDb().getLoses(player.getUniqueId());
+        String time = main.getPlayerManager().getOnlineTime(player);
 
 
         ArrayList<String> lore = new ArrayList<>();

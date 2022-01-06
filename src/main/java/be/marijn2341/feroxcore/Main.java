@@ -5,10 +5,14 @@ import be.marijn2341.feroxcore.commands.staff.*;
 import be.marijn2341.feroxcore.commands.StatisticsCommand;
 import be.marijn2341.feroxcore.commands.VerifyCommand;
 import be.marijn2341.feroxcore.database.Database;
+import be.marijn2341.feroxcore.database.RegistrationDatabase;
 import be.marijn2341.feroxcore.listeners.*;
+import be.marijn2341.feroxcore.manager.*;
+import be.marijn2341.feroxcore.manager.inventorysettings.ItemStackSerializer;
 import be.marijn2341.feroxcore.manager.inventorysettings.Listeners.InventoryDragListener;
-import be.marijn2341.feroxcore.manager.MapManager;
-import be.marijn2341.feroxcore.manager.PlayerManager;
+import be.marijn2341.feroxcore.manager.statistics.GameStatistics;
+import be.marijn2341.feroxcore.manager.statistics.PlayerStatistics;
+import be.marijn2341.feroxcore.utils.Gui;
 import be.marijn2341.feroxcore.utils.Utils;
 import com.onarandombox.MultiverseCore.MultiverseCore;
 import com.onarandombox.MultiverseCore.api.MVWorldManager;
@@ -30,11 +34,24 @@ public class Main extends JavaPlugin {
     private File WorldsFile;
 
     private static Main instance;
+    private TeamManager teamManager;
+    private ScoreboardManager scoreboardManager;
+    private PlayerManager playerManager;
+    private NexusManager nexusManager;
+    private MapManager mapManager;
+    private DataManager dataManager;
+    private Database database;
+    private RegistrationDatabase registrationDatabase;
+    private GameStatistics gameStatistics;
+    private PlayerStatistics playerStatistics;
+    private Gui gui;
+    private ItemStackSerializer serializer;
 
     public static MVWorldManager wm;
 
     @Override
     public void onEnable() {
+
         // CHECK IF WORLDS FILE EXISTS
         if (!this.WorldsFile.exists()) {
             this.saveResource("worlds.yml", true);
@@ -54,47 +71,61 @@ public class Main extends JavaPlugin {
         getConfig().options().copyDefaults(true);
         saveConfig();
 
+        // MAIN INSTANCE
+        instance = this;
+
+        // LOAD CLASSES
+        teamManager = new TeamManager();
+        scoreboardManager = new ScoreboardManager();
+        playerManager = new PlayerManager();
+        nexusManager = new NexusManager();
+        mapManager = new MapManager();
+        dataManager = new DataManager();
+        database = new Database();
+        registrationDatabase = new RegistrationDatabase();
+        gameStatistics = new GameStatistics();
+        playerStatistics = new PlayerStatistics();
+        gui = new Gui();
+        serializer = new ItemStackSerializer();
+
         // REGISTER EVENTS
         registerEvents();
 
         // REGISTER COMMANDS
         registerCommands();
 
-        // MAIN INSTANCE
-        instance = this;
+        // CONNECT TO DATABASE
+        database.initialize();
 
         // LOAD DEFAULT INVENTORY
-        PlayerManager.loadDefaultItems();
+        playerManager.loadDefaultItems();
 
         // LOAD ALL MAPS
-        MapManager.loadMaps();
+        mapManager.loadMaps();
 
         // IMPLEMENT MULTIVERSE CORE
         MultiverseCore core = (MultiverseCore) Bukkit.getServer().getPluginManager().getPlugin("Multiverse-Core");
         wm = core.getMVWorldManager();
 
         // DELETE ACTIVE MAP ON EVERY RELOAD / RESTART.
-        MapManager.ForceDeleteGame();
+        mapManager.ForceDeleteGame();
 
         // CHECK IF THERE ARE PLAYERS ONLINE (RELOAD)
         if (Bukkit.getOnlinePlayers().size() >= 1) {
-            MapManager.PREVIOUSMAP.clear();
-            MapManager.startGame();
+            dataManager.getPreviousMap().clear();
+            mapManager.startGame();
             for (Player plr : Bukkit.getOnlinePlayers()) {
                 Utils.KickOnReload(plr);
             }
         }
 
-        // CONNECT TO DATABASE
-        Database.initialize();
-
         // LOAD THE LOBBY
-        MapManager.loadLobby();
+        mapManager.loadLobby();
     }
 
     @Override
     public void onDisable() {
-        Database.getHikari().close();
+        database.getHikari().close();
     }
 
     public File getWorldsFile() {
@@ -109,10 +140,49 @@ public class Main extends JavaPlugin {
         return instance;
     }
 
+    public TeamManager getTeamManager() {
+        return teamManager;
+    }
+    public ScoreboardManager getScoreboardManager() {
+        return scoreboardManager;
+    }
+    public PlayerManager getPlayerManager() {
+        return playerManager;
+    }
+    public NexusManager getNexusManager() {
+        return nexusManager;
+    }
+    public MapManager getMapManager() {
+        return mapManager;
+    }
+    public DataManager getDataManager() {
+        return dataManager;
+    }
+    public Database getDb() {
+        return database;
+    }
+    public RegistrationDatabase getRegistrationDatabase() {
+        return registrationDatabase;
+    }
+    public GameStatistics getGameStatistics() {
+        return gameStatistics;
+    }
+    public PlayerStatistics getPlayerStatistics() {
+        return playerStatistics;
+    }
+    public Gui getGui() {
+        return gui;
+    }
+    public ItemStackSerializer getSerializer() {
+        return serializer;
+    }
+
     public Main() {
         this.WorldsFile = new File(getDataFolder(), "worlds.yml");
         this.WorldsConfig = (FileConfiguration) YamlConfiguration.loadConfiguration(this.WorldsFile);
     }
+
+
 
     public void registerEvents() {
         PluginManager plm = getServer().getPluginManager();

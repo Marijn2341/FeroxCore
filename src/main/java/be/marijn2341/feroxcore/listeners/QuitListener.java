@@ -3,7 +3,7 @@ package be.marijn2341.feroxcore.listeners;
 import be.marijn2341.feroxcore.commands.staff.SetupCommand;
 import be.marijn2341.feroxcore.database.Database;
 import be.marijn2341.feroxcore.Main;
-import be.marijn2341.feroxcore.manager.TeamManager;
+import be.marijn2341.feroxcore.manager.DataManager;
 import be.marijn2341.feroxcore.utils.Utils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -11,20 +11,23 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 public class QuitListener implements Listener {
+
+    private Main main = Main.getInstance();
+
     @EventHandler
     public void PlayerQuit(PlayerQuitEvent e) {
         Player player = e.getPlayer();
         e.setQuitMessage(Utils.color("&8[&4&l-&8] &7" + player.getName()));
-        if (TeamManager.TEAMBLUE.contains(player.getUniqueId())) {
-            TeamManager.TEAMBLUE.remove(player.getUniqueId());
-        } else if (TeamManager.TEAMRED.contains(player.getUniqueId())) {
-            TeamManager.TEAMRED.remove(player.getUniqueId());
-        } else if (TeamManager.SPECTATORS.contains(player.getUniqueId())) {
-            TeamManager.SPECTATORS.remove(player.getUniqueId());
+        if (main.getDataManager().getTeamBlue().contains(player.getUniqueId())) {
+            main.getDataManager().getTeamBlue().remove(player.getUniqueId());
+        } else if (main.getDataManager().getTeamRed().contains(player.getUniqueId())) {
+            main.getDataManager().getTeamRed().remove(player.getUniqueId());
+        } else if (main.getDataManager().getSpectators().contains(player.getUniqueId())) {
+            main.getDataManager().getSpectators().remove(player.getUniqueId());
         }
 
-        if (TeamManager.PLAYERS.contains(player.getUniqueId())) {
-            TeamManager.PLAYERS.remove(player.getUniqueId());
+        if (main.getDataManager().getPlayers().contains(player.getUniqueId())) {
+            main.getDataManager().getPlayers().remove(player.getUniqueId());
         }
 
         if (SetupCommand.SETUPMODE.containsKey(player.getUniqueId())) {
@@ -38,6 +41,6 @@ public class QuitListener implements Listener {
             }
         }
 
-        Database.setPlaytimeDB(player.getUniqueId());
+        main.getDb().setPlaytimeDB(player.getUniqueId());
     }
 }

@@ -1,5 +1,7 @@
 package be.marijn2341.feroxcore.database;
 
+import be.marijn2341.feroxcore.Main;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -8,8 +10,10 @@ import java.util.UUID;
 
 public class RegistrationDatabase {
 
-    public static boolean playerExists(UUID uuid) {
-        try (Connection con = Database.getHikari().getConnection();
+    private Main main = Main.getInstance();
+
+    public boolean playerExists(UUID uuid) {
+        try (Connection con = main.getDb().getHikari().getConnection();
              PreparedStatement statement = con.prepareStatement("SELECT * FROM RegistrationCodes WHERE uuid=?")) {
             statement.setString(1, uuid.toString());
             ResultSet results = statement.executeQuery();
@@ -24,8 +28,8 @@ public class RegistrationDatabase {
         return false;
     }
 
-    public static boolean allreadyRegistered(UUID uuid) {
-        try (Connection con = Database.getHikari().getConnection();
+    public boolean allreadyRegistered(UUID uuid) {
+        try (Connection con = main.getDb().getHikari().getConnection();
              PreparedStatement statement = con.prepareStatement("SELECT discordid FROM Stats WHERE uuid=?")) {
             statement.setString(1, uuid.toString());
             ResultSet results = statement.executeQuery();
@@ -44,8 +48,8 @@ public class RegistrationDatabase {
         return false;
     }
 
-    public static String getRegistrationCode(UUID uuid) {
-        try (Connection con = Database.getHikari().getConnection();
+    public String getRegistrationCode(UUID uuid) {
+        try (Connection con = main.getDb().getHikari().getConnection();
              PreparedStatement statement = con.prepareStatement("SELECT code FROM RegistrationCodes WHERE uuid=?")) {
             statement.setString(1, uuid.toString());
             ResultSet results = statement.executeQuery();
@@ -61,8 +65,8 @@ public class RegistrationDatabase {
         return null;
     }
 
-    public static boolean checkIfCodeExists(String code) {
-        try (Connection con = Database.getHikari().getConnection();
+    public boolean checkIfCodeExists(String code) {
+        try (Connection con = main.getDb().getHikari().getConnection();
              PreparedStatement statement = con.prepareStatement("SELECT 1 FROM RegistrationCodes WHERE code=?")) {
             statement.setString(1, code);
             ResultSet results = statement.executeQuery();
@@ -76,8 +80,8 @@ public class RegistrationDatabase {
         return false;
     }
 
-    public static void insertCode(UUID uuid, String code) {
-        try (Connection con = Database.getHikari().getConnection();
+    public void insertCode(UUID uuid, String code) {
+        try (Connection con = main.getDb().getHikari().getConnection();
              PreparedStatement statement = con.prepareStatement("INSERT INTO RegistrationCodes SET uuid=?, code=?")) {
             statement.setString(1, uuid.toString());
             statement.setString(2, code);
