@@ -1,10 +1,9 @@
 package be.marijn2341.feroxcore.listeners;
 
-import be.marijn2341.feroxcore.commands.staff.SetupCommand;
-import be.marijn2341.feroxcore.database.Database;
 import be.marijn2341.feroxcore.Main;
-import be.marijn2341.feroxcore.manager.DataManager;
+import be.marijn2341.feroxcore.commands.staff.SetupCommand;
 import be.marijn2341.feroxcore.utils.Utils;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -12,7 +11,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 public class QuitListener implements Listener {
 
-    private Main main = Main.getInstance();
+    private final Main main = Main.getInstance();
 
     @EventHandler
     public void PlayerQuit(PlayerQuitEvent e) {
@@ -22,13 +21,9 @@ public class QuitListener implements Listener {
             main.getDataManager().getTeamBlue().remove(player.getUniqueId());
         } else if (main.getDataManager().getTeamRed().contains(player.getUniqueId())) {
             main.getDataManager().getTeamRed().remove(player.getUniqueId());
-        } else if (main.getDataManager().getSpectators().contains(player.getUniqueId())) {
-            main.getDataManager().getSpectators().remove(player.getUniqueId());
-        }
+        } else main.getDataManager().getSpectators().remove(player.getUniqueId());
 
-        if (main.getDataManager().getPlayers().contains(player.getUniqueId())) {
-            main.getDataManager().getPlayers().remove(player.getUniqueId());
-        }
+        main.getDataManager().getPlayers().remove(player.getUniqueId());
 
         if (SetupCommand.SETUPMODE.containsKey(player.getUniqueId())) {
             if (Main.getInstance().getWorldsConfig().contains("worlds." + SetupCommand.SETUPMODE.get(player.getUniqueId()).getName())) {
@@ -38,6 +33,12 @@ public class QuitListener implements Listener {
             } else {
                 SetupCommand.SETUPMODE.remove(player.getUniqueId());
                 return;
+            }
+        }
+
+        if (Bukkit.getOnlinePlayers().size() == 1) {
+            if (main.getMapManager().isGameActive()) {
+                main.getMapManager().ForceDeleteGame();
             }
         }
 
