@@ -1,7 +1,6 @@
 package be.marijn2341.feroxcore.listeners;
 
 import be.marijn2341.feroxcore.Main;
-import be.marijn2341.feroxcore.manager.DataManager;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -12,7 +11,7 @@ import org.bukkit.projectiles.ProjectileSource;
 
 public class FriendlyFire implements Listener {
 
-    private Main main = Main.getInstance();
+    private final Main main = Main.getInstance();
 
     @EventHandler
     public void onDamage(EntityDamageByEntityEvent e) {

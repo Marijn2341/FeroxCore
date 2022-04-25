@@ -1,6 +1,5 @@
 package be.marijn2341.feroxcore.manager;
 
-import be.marijn2341.feroxcore.database.Database;
 import be.marijn2341.feroxcore.Main;
 import be.marijn2341.feroxcore.manager.statistics.GameStatistics;
 import be.marijn2341.feroxcore.manager.statistics.PlayerStatistics;
@@ -14,20 +13,20 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.*;
+import java.util.Date;
+import java.util.Random;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class MapManager {
 
-    private static Date GAMESTARTEDAT = null;
     public static boolean GAMEACTIVE = false;
-
     public static int KILLS = 0;
     public static int DEATHS = 0;
     public static int ARROWSSHOT = 0;
     public static int ARROWSHIT = 0;
-
-    private Main main = Main.getInstance();
+    private static Date GAMESTARTEDAT = null;
+    private final Main main = Main.getInstance();
 
 
     public void loadMaps() {
@@ -117,6 +116,9 @@ public class MapManager {
             if (w.getName().contains("_activegame")) {
                 main.getDataManager().getPreviousMap().add(w.getName());
                 Main.wm.deleteWorld(w.getName());
+                main.getDataManager().clearLists();
+                GAMEACTIVE = false;
+                GAMESTARTEDAT = null;
             }
         }
     }
@@ -179,15 +181,7 @@ public class MapManager {
 
                 GAMEACTIVE = false;
 
-                main.getDataManager().getLosers().clear();
-                main.getDataManager().getWinners().clear();
-                main.getTeamManager().clearTeams();
-                main.getDataManager().getRedNexusesLoc().clear();
-                main.getDataManager().getBlueNexusesLoc().clear();
-                main.getDataManager().getRedNexusesLocTotal().clear();
-                main.getDataManager().getBlueNexusesLocTotal().clear();
-                main.getDataManager().getSpawnPoints().clear();
-                main.getDataManager().getInventories().clear();
+                main.getDataManager().clearLists();
 
                 GAMESTARTEDAT = null;
 
@@ -198,7 +192,7 @@ public class MapManager {
                             Player plr = Bukkit.getPlayer(uuid);
                             teleportToSpawn(plr);
                             main.getDataManager().getPreviousMap().clear();
-                            String wereld = w.getName().substring(0, w.getName().length()-11);
+                            String wereld = w.getName().substring(0, w.getName().length() - 11);
                             main.getDataManager().getPreviousMap().add(wereld);
                             Main.wm.deleteWorld(w.getName());
 
@@ -240,7 +234,7 @@ public class MapManager {
         long seconds = TimeUnit.MILLISECONDS.toSeconds(milliseconds);
         long hours = TimeUnit.SECONDS.toHours(seconds);
         long minutes = TimeUnit.SECONDS.toMinutes(seconds) - (hours * 60);
-        String tijd =  hours + "h, " + minutes + "min";
+        String tijd = hours + "h, " + minutes + "min";
         return tijd;
     }
 
@@ -322,9 +316,7 @@ public class MapManager {
         }
         if (original.getX() < xMax && original.getX() > xMin) {
             if (original.getY() < yMax && original.getY() > yMin) {
-                if (original.getZ() < zMax && original.getZ() > zMin) {
-                    return true;
-                }
+                return original.getZ() < zMax && original.getZ() > zMin;
             }
         }
         return false;
@@ -344,9 +336,9 @@ public class MapManager {
 
         // SET AREA 1
 
-        double area1x = x-2;
-        double area1y = y-5;
-        double area1z = z-2;
+        double area1x = x - 2;
+        double area1y = y - 5;
+        double area1z = z - 2;
 
         Location area1 = new Location(game, area1x, area1y, area1z);
         return area1;
@@ -365,9 +357,9 @@ public class MapManager {
                 team + ".z");
 
         // SET AREA 2
-        double area2x = x+2;
-        double area2y = y+4;
-        double area2z = z+2;
+        double area2x = x + 2;
+        double area2y = y + 4;
+        double area2z = z + 2;
 
         Location area2 = new Location(game, area2x, area2y, area2z);
         return area2;

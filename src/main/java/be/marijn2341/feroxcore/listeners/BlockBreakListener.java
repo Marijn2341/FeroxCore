@@ -1,8 +1,7 @@
 package be.marijn2341.feroxcore.listeners;
 
 import be.marijn2341.feroxcore.Main;
-import be.marijn2341.feroxcore.database.Database;
-import be.marijn2341.feroxcore.manager.*;
+import be.marijn2341.feroxcore.manager.ScoreboardManager;
 import be.marijn2341.feroxcore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -16,11 +15,11 @@ import java.util.UUID;
 
 public class BlockBreakListener implements Listener {
 
-    private Main main = Main.getInstance();
+    private final Main main = Main.getInstance();
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent e) {
-        Player player = (Player) e.getPlayer();
+        Player player = e.getPlayer();
         ScoreboardManager sbmanager = new ScoreboardManager();
 
         if (e.getBlock().getWorld().getName().equals(main.getDataManager().getLobby().get("lobby").getWorld().getName())) {

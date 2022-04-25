@@ -78,37 +78,37 @@ public class SetupCommand implements CommandExecutor {
                         }
                     }
                 }
-                    if (SETUPMODE.containsKey(player.getUniqueId())) {
-                        if (args.length == 1) {
-                            if (args[0].equalsIgnoreCase("save")) {
-                                if (SETUPMODE.containsKey(player.getUniqueId())) {
-                                    try {
-                                        Main.getInstance().getWorldsConfig().save(Main.getInstance().getWorldsFile());
-                                        SETUPMODE.remove(player.getUniqueId());
-                                        player.sendMessage(Utils.color("&6You successfully saved the setup, You can load the map with /loadmaps."));
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                        player.sendMessage(Utils.color("&cSomething went wrong while saving, Contact the developer."));
-                                    }
-                                } else {
-                                    player.sendMessage(Utils.color("&cYou are not in setup mode."));
-                                    return false;
+                if (SETUPMODE.containsKey(player.getUniqueId())) {
+                    if (args.length == 1) {
+                        if (args[0].equalsIgnoreCase("save")) {
+                            if (SETUPMODE.containsKey(player.getUniqueId())) {
+                                try {
+                                    Main.getInstance().getWorldsConfig().save(Main.getInstance().getWorldsFile());
+                                    SETUPMODE.remove(player.getUniqueId());
+                                    player.sendMessage(Utils.color("&6You successfully saved the setup, You can load the map with /loadmaps."));
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                    player.sendMessage(Utils.color("&cSomething went wrong while saving, Contact the developer."));
                                 }
-                            } else if (args[0].equalsIgnoreCase("exit")) {
-                                if (SETUPMODE.containsKey(player.getUniqueId())) {
-                                    if (Main.getInstance().getWorldsConfig().contains("worlds." + SETUPMODE.get(player.getUniqueId()).getName())) {
-                                        Main.getInstance().getWorldsConfig().set("worlds." + SETUPMODE.get(player.getUniqueId()).getName(), null);
-                                        SETUPMODE.remove(player.getUniqueId());
-                                        player.sendMessage(Utils.color("&6Successfully exited setup mode."));
-                                        return true;
-                                    } else {
-                                        SETUPMODE.remove(player.getUniqueId());
-                                        player.sendMessage(Utils.color("&6Successfully exited setup mode."));
-                                        return true;
-                                    }
+                            } else {
+                                player.sendMessage(Utils.color("&cYou are not in setup mode."));
+                                return false;
+                            }
+                        } else if (args[0].equalsIgnoreCase("exit")) {
+                            if (SETUPMODE.containsKey(player.getUniqueId())) {
+                                if (Main.getInstance().getWorldsConfig().contains("worlds." + SETUPMODE.get(player.getUniqueId()).getName())) {
+                                    Main.getInstance().getWorldsConfig().set("worlds." + SETUPMODE.get(player.getUniqueId()).getName(), null);
+                                    SETUPMODE.remove(player.getUniqueId());
+                                    player.sendMessage(Utils.color("&6Successfully exited setup mode."));
+                                    return true;
+                                } else {
+                                    SETUPMODE.remove(player.getUniqueId());
+                                    player.sendMessage(Utils.color("&6Successfully exited setup mode."));
+                                    return true;
                                 }
                             }
                         }
+                    }
                     if (args.length == 2) {
                         if (args[0].equalsIgnoreCase("setspawn")) {
                             String wereld = SETUPMODE.get(player.getUniqueId()).getName();
@@ -118,7 +118,7 @@ public class SetupCommand implements CommandExecutor {
                                 Main.getInstance().getWorldsConfig().set("worlds." + wereld + ".spawnpoints.red.y", Double.valueOf(df.format(loc.getY())));
                                 Main.getInstance().getWorldsConfig().set("worlds." + wereld + ".spawnpoints.red.z", Double.valueOf(df.format(loc.getZ())));
                                 Main.getInstance().getWorldsConfig().set("worlds." + wereld + ".spawnpoints.red.yaw", Double.valueOf(df.format(loc.getYaw())));
-                                Main.getInstance().getWorldsConfig().set("worlds." + wereld + ".spawnpoints.red.pitch", Double.valueOf(df.format(loc.getPitch())));;
+                                Main.getInstance().getWorldsConfig().set("worlds." + wereld + ".spawnpoints.red.pitch", Double.valueOf(df.format(loc.getPitch())));
 
                                 player.sendMessage(Utils.color("&6Red spawnpoint: &7" + df.format(loc.getX()) + "x, " + df.format(loc.getY()) + "y, " +
                                         df.format(loc.getZ()) + "z, " + df.format(loc.getYaw()) + " yaw, " + df.format(loc.getPitch()) + " pitch"));
@@ -141,7 +141,7 @@ public class SetupCommand implements CommandExecutor {
                     if (args.length == 4) {
                         if (args[0].equalsIgnoreCase("nexus")) {
                             if (args[1].equalsIgnoreCase("add")) {
-                                if (args[2] != null && args[3] !=null) {
+                                if (args[2] != null && args[3] != null) {
                                     Block block = player.getTargetBlock((Set<Material>) null, 5);
                                     if (block.getType() == Material.OBSIDIAN) {
                                         String team = args[2].toLowerCase(Locale.ROOT);
@@ -151,7 +151,7 @@ public class SetupCommand implements CommandExecutor {
                                         }
                                         String nexus = args[3];
                                         String wereld = SETUPMODE.get(player.getUniqueId()).getName();
-                                        Main.getInstance().getWorldsConfig().set("worlds." + wereld + ".nexuses." + team + "." +  nexus + ".x", block.getX());
+                                        Main.getInstance().getWorldsConfig().set("worlds." + wereld + ".nexuses." + team + "." + nexus + ".x", block.getX());
                                         Main.getInstance().getWorldsConfig().set("worlds." + wereld + ".nexuses." + team + "." + nexus + ".y", block.getY());
                                         Main.getInstance().getWorldsConfig().set("worlds." + wereld + ".nexuses." + team + "." + nexus + ".z", block.getZ());
                                         player.sendMessage(Utils.color("&6Nexus &7" + nexus + " &6added for team &7" + team + "&6: &7" + block.getX() + "x, " + block.getY() + "y, " + block.getZ() + "z."));

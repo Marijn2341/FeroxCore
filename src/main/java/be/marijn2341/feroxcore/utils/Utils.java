@@ -26,7 +26,7 @@ public class Utils {
 
         for (int i = 0; i < n; i++) {
 
-            int index = (int)(AlphaNumericString.length() * Math.random());
+            int index = (int) (AlphaNumericString.length() * Math.random());
 
             sb.append(AlphaNumericString.charAt(index));
         }

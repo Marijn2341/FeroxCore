@@ -1,13 +1,12 @@
 package be.marijn2341.feroxcore.manager.statistics;
 
 import be.marijn2341.feroxcore.Main;
-import be.marijn2341.feroxcore.manager.DataManager;
 import be.marijn2341.feroxcore.utils.Utils;
 import org.bukkit.entity.Player;
 
 public class GameStatistics {
 
-    private Main main = Main.getInstance();
+    private final Main main = Main.getInstance();
 
     public void sendGameStats(Player player, String matchtijd) {
         player.sendMessage(Utils.color("&8-----"));

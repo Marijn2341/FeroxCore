@@ -1,7 +1,6 @@
 package be.marijn2341.feroxcore.listeners;
 
 import be.marijn2341.feroxcore.Main;
-import be.marijn2341.feroxcore.manager.DataManager;
 import be.marijn2341.feroxcore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -11,11 +10,11 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 public class ChatListener implements Listener {
 
-    private Main main = Main.getInstance();
+    private final Main main = Main.getInstance();
 
     @EventHandler
     public void onChat(AsyncPlayerChatEvent e) {
-        Player player = (Player) e.getPlayer();
+        Player player = e.getPlayer();
         if (main.getDataManager().getTeamRed().contains(player.getUniqueId())) {
             Bukkit.broadcastMessage(Utils.color("&7[&cRED&7] &c" + player.getName() + "&7: &f" + e.getMessage()));
             e.setCancelled(true);
@@ -33,7 +32,7 @@ public class ChatListener implements Listener {
             e.setCancelled(true);
             return;
         }
-            Bukkit.broadcastMessage(Utils.color("&7" + player.getName() + ": &f" + e.getMessage()));
-            e.setCancelled(true);
+        Bukkit.broadcastMessage(Utils.color("&7" + player.getName() + ": &f" + e.getMessage()));
+        e.setCancelled(true);
     }
 }

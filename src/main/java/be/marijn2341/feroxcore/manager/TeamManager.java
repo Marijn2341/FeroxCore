@@ -3,14 +3,19 @@ package be.marijn2341.feroxcore.manager;
 import be.marijn2341.feroxcore.Main;
 import be.marijn2341.feroxcore.utils.Utils;
 import com.nametagedit.plugin.NametagEdit;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Color;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
 
 public class TeamManager {
 
-    private Main main = Main.getInstance();
+    private final Main main = Main.getInstance();
 
     public void addToTeam(String team, Player player) {
         if (team.equalsIgnoreCase("red")) {
@@ -25,7 +30,7 @@ public class TeamManager {
         main.getPlayerManager().setInventory(player);
         ScoreboardManager sbmanager = new ScoreboardManager();
         sbmanager.getGameScoreboard(player);
-     }
+    }
 
     public void clearTeams() {
         main.getDataManager().getTeamRed().clear();
@@ -58,13 +63,9 @@ public class TeamManager {
 
     public boolean checkTeamsUnbalanced(String team) {
         if (team.equalsIgnoreCase("blue")) {
-            if (main.getDataManager().getTeamBlue().size() > main.getDataManager().getTeamRed().size()) {
-                return true;
-            }
+            return main.getDataManager().getTeamBlue().size() > main.getDataManager().getTeamRed().size();
         } else if (team.equalsIgnoreCase("red")) {
-            if (main.getDataManager().getTeamRed().size() > main.getDataManager().getTeamBlue().size()) {
-                return true;
-            }
+            return main.getDataManager().getTeamRed().size() > main.getDataManager().getTeamBlue().size();
         }
         return false;
     }
@@ -102,10 +103,7 @@ public class TeamManager {
     }
 
     public boolean AllreadyInTeam(Player player) {
-        if (main.getDataManager().getTeamRed().contains(player.getUniqueId()) || main.getDataManager().getTeamBlue().contains(player.getUniqueId()) || main.getDataManager().getSpectators().contains(player.getUniqueId())) {
-            return true;
-        }
-        return false;
+        return main.getDataManager().getTeamRed().contains(player.getUniqueId()) || main.getDataManager().getTeamBlue().contains(player.getUniqueId()) || main.getDataManager().getSpectators().contains(player.getUniqueId());
     }
 
     public void ClearInventory(Player player) {

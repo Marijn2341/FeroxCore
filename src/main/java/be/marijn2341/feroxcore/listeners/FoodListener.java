@@ -10,10 +10,10 @@ import org.bukkit.event.entity.FoodLevelChangeEvent;
 public class FoodListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
-    public void onFoodLevelChange (FoodLevelChangeEvent e) {
+    public void onFoodLevelChange(FoodLevelChangeEvent e) {
         if (e.getEntityType() != EntityType.PLAYER) return;
         if (e.getEntity().getWorld().getName().equals(Main.getInstance().getWorldsConfig().getString("lobby.world"))) {
-            e.setCancelled (true);
+            e.setCancelled(true);
         }
     }
 }

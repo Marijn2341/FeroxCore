@@ -1,10 +1,7 @@
 package be.marijn2341.feroxcore.listeners;
 
 import be.marijn2341.feroxcore.Main;
-import be.marijn2341.feroxcore.manager.DataManager;
-import be.marijn2341.feroxcore.manager.TeamManager;
 import be.marijn2341.feroxcore.utils.Utils;
-import be.marijn2341.feroxcore.utils.Gui;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -14,7 +11,7 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 
 public class InventoryClickListener implements Listener {
 
-    private Main main = Main.getInstance();
+    private final Main main = Main.getInstance();
 
     @EventHandler
     public void onClick(InventoryClickEvent e) {

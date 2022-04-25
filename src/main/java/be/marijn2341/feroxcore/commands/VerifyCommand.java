@@ -1,7 +1,6 @@
 package be.marijn2341.feroxcore.commands;
 
 import be.marijn2341.feroxcore.Main;
-import be.marijn2341.feroxcore.database.RegistrationDatabase;
 import be.marijn2341.feroxcore.utils.Utils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -10,7 +9,7 @@ import org.bukkit.entity.Player;
 
 public class VerifyCommand implements CommandExecutor {
 
-    private Main main = Main.getInstance();
+    private final Main main = Main.getInstance();
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {

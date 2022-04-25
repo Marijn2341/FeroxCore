@@ -1,7 +1,6 @@
 package be.marijn2341.feroxcore.manager;
 
 import be.marijn2341.feroxcore.Main;
-import be.marijn2341.feroxcore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -9,7 +8,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 
 public class NexusManager {
 
-    private Main main = Main.getInstance();
+    private final Main main = Main.getInstance();
 
     public void countNexuses() {
 
@@ -39,19 +38,11 @@ public class NexusManager {
     public boolean nexusAlive(String team, String nexus) {
 
         if (team.equalsIgnoreCase("red")) {
-            if (main.getDataManager().getRedNexusesLoc().containsKey(nexus)) {
-                return true;
-            } else {
-                return false;
-            }
+            return main.getDataManager().getRedNexusesLoc().containsKey(nexus);
         }
 
         if (team.equalsIgnoreCase("blue")) {
-            if (main.getDataManager().getBlueNexusesLoc().containsKey(nexus)) {
-                return true;
-            } else {
-                return false;
-            }
+            return main.getDataManager().getBlueNexusesLoc().containsKey(nexus);
         }
 
         return false;

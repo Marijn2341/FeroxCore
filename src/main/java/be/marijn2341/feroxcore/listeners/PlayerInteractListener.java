@@ -3,9 +3,7 @@ package be.marijn2341.feroxcore.listeners;
 import be.marijn2341.feroxcore.Main;
 import be.marijn2341.feroxcore.commands.staff.SetupCommand;
 import be.marijn2341.feroxcore.manager.MapManager;
-import be.marijn2341.feroxcore.manager.TeamManager;
 import be.marijn2341.feroxcore.utils.Utils;
-import be.marijn2341.feroxcore.utils.Gui;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -15,7 +13,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 public class PlayerInteractListener implements Listener {
 
-    private Main main = Main.getInstance();
+    private final Main main = Main.getInstance();
 
     @EventHandler
     public void onclick(PlayerInteractEvent e) {

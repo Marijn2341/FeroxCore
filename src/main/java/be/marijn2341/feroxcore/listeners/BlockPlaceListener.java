@@ -1,7 +1,6 @@
 package be.marijn2341.feroxcore.listeners;
 
 import be.marijn2341.feroxcore.Main;
-import be.marijn2341.feroxcore.manager.DataManager;
 import be.marijn2341.feroxcore.manager.MapManager;
 import be.marijn2341.feroxcore.utils.Utils;
 import org.bukkit.entity.Player;
@@ -11,11 +10,11 @@ import org.bukkit.event.block.BlockPlaceEvent;
 
 public class BlockPlaceListener implements Listener {
 
-    private Main main = Main.getInstance();
+    private final Main main = Main.getInstance();
 
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent e) {
-        Player player = (Player) e.getPlayer();
+        Player player = e.getPlayer();
         if (MapManager.GAMEACTIVE) {
             if (main.getDataManager().getTeamRed().contains(player.getUniqueId()) || main.getDataManager().getTeamBlue().contains(player.getUniqueId())) {
                 if (main.getMapManager().iswithin(e.getBlock().getLocation(), main.getDataManager().getAreas().get("redarea1"), main.getDataManager().getAreas().get("redarea2"))) {

@@ -1,6 +1,5 @@
 package be.marijn2341.feroxcore.manager.inventorysettings;
 
-import be.marijn2341.feroxcore.Main;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;

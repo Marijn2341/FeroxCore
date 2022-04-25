@@ -1,8 +1,6 @@
 package be.marijn2341.feroxcore.utils;
 
 import be.marijn2341.feroxcore.Main;
-import be.marijn2341.feroxcore.database.Database;
-import be.marijn2341.feroxcore.manager.PlayerManager;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -13,7 +11,7 @@ import java.util.ArrayList;
 
 public class ItemStacks {
 
-    private Main main = Main.getInstance();
+    private final Main main = Main.getInstance();
 
     public ItemStack compass() {
         ItemStack compass = new ItemStack(Material.COMPASS);

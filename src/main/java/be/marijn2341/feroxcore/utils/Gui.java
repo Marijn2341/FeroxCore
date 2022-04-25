@@ -1,8 +1,6 @@
 package be.marijn2341.feroxcore.utils;
 
 import be.marijn2341.feroxcore.Main;
-import be.marijn2341.feroxcore.database.Database;
-import be.marijn2341.feroxcore.manager.inventorysettings.ItemStackSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -11,11 +9,11 @@ import org.bukkit.inventory.ItemStack;
 
 public class Gui {
 
-    private Main main = Main.getInstance();
+    private final Main main = Main.getInstance();
 
     public void createTeamSelectorMenu(Player player) {
         ItemStacks is = new ItemStacks();
-        Inventory teamselector = Bukkit.createInventory((InventoryHolder)player, 9, Utils.color("&6Team Selector"));
+        Inventory teamselector = Bukkit.createInventory(player, 9, Utils.color("&6Team Selector"));
         teamselector.setItem(2, is.blueWoolSelector());
         teamselector.setItem(6, is.redWoolSelector());
         teamselector.setItem(4, is.randomTeamSelector());
@@ -25,7 +23,7 @@ public class Gui {
 
     public void createStaticsMenu(Player player) {
         ItemStacks is = new ItemStacks();
-        Inventory statistics = Bukkit.createInventory((InventoryHolder)player, 45, Utils.color("&6Statistics"));
+        Inventory statistics = Bukkit.createInventory(player, 45, Utils.color("&6Statistics"));
         statistics.setItem(13, is.playerOnlineTime(player));
         statistics.setItem(21, is.blocksWalked(player));
         statistics.setItem(22, is.blocksSprinted(player));
@@ -40,7 +38,7 @@ public class Gui {
 
     public void createPlayerMenu(Player player) {
         ItemStacks is = new ItemStacks();
-        Inventory inv = Bukkit.createInventory((InventoryHolder) player, 27, Utils.color("&6" + player.getName()));
+        Inventory inv = Bukkit.createInventory(player, 27, Utils.color("&6" + player.getName()));
         inv.setItem(12, is.playerStatistics(player));
         inv.setItem(14, is.playerSettings());
         player.openInventory(inv);
@@ -48,14 +46,14 @@ public class Gui {
 
     public void createSettingsMenu(Player player) {
         ItemStacks is = new ItemStacks();
-        Inventory inv = Bukkit.createInventory((InventoryHolder) player, 27, Utils.color("&6Settings"));
+        Inventory inv = Bukkit.createInventory(player, 27, Utils.color("&6Settings"));
         inv.setItem(13, is.editInventory());
         player.openInventory(inv);
     }
 
     public void editInventory(Player player) {
         ItemStacks is = new ItemStacks();
-        Inventory inv = Bukkit.createInventory((InventoryHolder) player, 36, Utils.color("&6Edit Inventory"));
+        Inventory inv = Bukkit.createInventory(player, 36, Utils.color("&6Edit Inventory"));
         ItemStack[] items = main.getSerializer().deserialize(main.getDb().getInventory(player));
         inv.setContents(items);
 

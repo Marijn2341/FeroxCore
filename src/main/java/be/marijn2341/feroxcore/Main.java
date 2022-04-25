@@ -1,9 +1,12 @@
 package be.marijn2341.feroxcore;
 
 import be.marijn2341.feroxcore.commands.LobbyCommand;
-import be.marijn2341.feroxcore.commands.staff.*;
 import be.marijn2341.feroxcore.commands.StatisticsCommand;
 import be.marijn2341.feroxcore.commands.VerifyCommand;
+import be.marijn2341.feroxcore.commands.staff.LoadMapsCommand;
+import be.marijn2341.feroxcore.commands.staff.SetupCommand;
+import be.marijn2341.feroxcore.commands.staff.SkipGameCommand;
+import be.marijn2341.feroxcore.commands.staff.StartGameCommand;
 import be.marijn2341.feroxcore.database.Database;
 import be.marijn2341.feroxcore.database.RegistrationDatabase;
 import be.marijn2341.feroxcore.listeners.*;
@@ -17,12 +20,9 @@ import be.marijn2341.feroxcore.utils.Utils;
 import com.onarandombox.MultiverseCore.MultiverseCore;
 import com.onarandombox.MultiverseCore.api.MVWorldManager;
 import org.bukkit.Bukkit;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -30,10 +30,10 @@ import java.io.File;
 
 public class Main extends JavaPlugin {
 
-    private FileConfiguration WorldsConfig;
-    private File WorldsFile;
-
+    public static MVWorldManager wm;
     private static Main instance;
+    private final FileConfiguration WorldsConfig;
+    private final File WorldsFile;
     private TeamManager teamManager;
     private ScoreboardManager scoreboardManager;
     private PlayerManager playerManager;
@@ -47,7 +47,14 @@ public class Main extends JavaPlugin {
     private Gui gui;
     private ItemStackSerializer serializer;
 
-    public static MVWorldManager wm;
+    public Main() {
+        this.WorldsFile = new File(getDataFolder(), "worlds.yml");
+        this.WorldsConfig = YamlConfiguration.loadConfiguration(this.WorldsFile);
+    }
+
+    public static Main getInstance() {
+        return instance;
+    }
 
     @Override
     public void onEnable() {
@@ -136,82 +143,82 @@ public class Main extends JavaPlugin {
         return this.WorldsConfig;
     }
 
-    public static Main getInstance() {
-        return instance;
-    }
-
     public TeamManager getTeamManager() {
         return teamManager;
     }
+
     public ScoreboardManager getScoreboardManager() {
         return scoreboardManager;
     }
+
     public PlayerManager getPlayerManager() {
         return playerManager;
     }
+
     public NexusManager getNexusManager() {
         return nexusManager;
     }
+
     public MapManager getMapManager() {
         return mapManager;
     }
+
     public DataManager getDataManager() {
         return dataManager;
     }
+
     public Database getDb() {
         return database;
     }
+
     public RegistrationDatabase getRegistrationDatabase() {
         return registrationDatabase;
     }
+
     public GameStatistics getGameStatistics() {
         return gameStatistics;
     }
+
     public PlayerStatistics getPlayerStatistics() {
         return playerStatistics;
     }
+
     public Gui getGui() {
         return gui;
     }
+
     public ItemStackSerializer getSerializer() {
         return serializer;
     }
 
-    public Main() {
-        this.WorldsFile = new File(getDataFolder(), "worlds.yml");
-        this.WorldsConfig = (FileConfiguration) YamlConfiguration.loadConfiguration(this.WorldsFile);
-    }
-
-
-
     public void registerEvents() {
         PluginManager plm = getServer().getPluginManager();
-        plm.registerEvents((Listener) new JoinListener(), (Plugin) this);
-        plm.registerEvents((Listener) new FoodListener(), (Plugin) this);
-        plm.registerEvents((Listener) new EntityDamageListener(), (Plugin) this);
-        plm.registerEvents((Listener) new LeafListener(), (Plugin) this);
-        plm.registerEvents((Listener) new PlayerInteractListener(), (Plugin) this);
-        plm.registerEvents((Listener) new QuitListener(), (Plugin) this);
-        plm.registerEvents((Listener) new InventoryClickListener(), (Plugin) this);
-        plm.registerEvents((Listener) new DeathListener(), (Plugin) this);
-        plm.registerEvents((Listener) new RespawnListener(), (Plugin) this);
-        plm.registerEvents((Listener) new BlockBreakListener(), (Plugin) this);
-        plm.registerEvents((Listener) new BlockPlaceListener(), (Plugin) this);
-        plm.registerEvents((Listener) new FriendlyFire(), (Plugin) this);
-        plm.registerEvents((Listener) new ChatListener(), (Plugin) this);
-        plm.registerEvents((Listener) new WeatherListener(), (Plugin) this);
-        plm.registerEvents((Listener) new ArrowShootListener(), (Plugin) this);
-        plm.registerEvents((Listener) new be.marijn2341.feroxcore.manager.inventorysettings.Listeners.InventoryClickListener(), (Plugin) this);
-        plm.registerEvents((Listener) new InventoryDragListener(), (Plugin) this);
+        plm.registerEvents(new JoinListener(), this);
+        plm.registerEvents(new FoodListener(), this);
+        plm.registerEvents(new EntityDamageListener(), this);
+        plm.registerEvents(new LeafListener(), this);
+        plm.registerEvents(new PlayerInteractListener(), this);
+        plm.registerEvents(new QuitListener(), this);
+        plm.registerEvents(new InventoryClickListener(), this);
+        plm.registerEvents(new DeathListener(), this);
+        plm.registerEvents(new RespawnListener(), this);
+        plm.registerEvents(new BlockBreakListener(), this);
+        plm.registerEvents(new BlockPlaceListener(), this);
+        plm.registerEvents(new FriendlyFire(), this);
+        plm.registerEvents(new ChatListener(), this);
+        plm.registerEvents(new WeatherListener(), this);
+        plm.registerEvents(new ArrowShootListener(), this);
+        plm.registerEvents(new be.marijn2341.feroxcore.manager.inventorysettings.Listeners.InventoryClickListener(), this);
+        plm.registerEvents(new InventoryDragListener(), this);
     }
 
     public void registerCommands() {
-        getCommand("loadmaps").setExecutor((CommandExecutor)new LoadMapsCommand());
-        getCommand("skipmap").setExecutor((CommandExecutor)new SkipGameCommand());
-        getCommand("lobby").setExecutor((CommandExecutor)new LobbyCommand());
-        getCommand("verify").setExecutor((CommandExecutor)new VerifyCommand());
-        getCommand("startgame").setExecutor((CommandExecutor)new StartGameCommand());
-        getCommand("setup").setExecutor((CommandExecutor)new SetupCommand());
-        getCommand("statistics").setExecutor((CommandExecutor) new StatisticsCommand());
+        getCommand("loadmaps").setExecutor(new LoadMapsCommand());
+        getCommand("skipmap").setExecutor(new SkipGameCommand());
+        getCommand("lobby").setExecutor(new LobbyCommand());
+        getCommand("verify").setExecutor(new VerifyCommand());
+        getCommand("startgame").setExecutor(new StartGameCommand());
+        getCommand("setup").setExecutor(new SetupCommand());
+        getCommand("statistics").setExecutor(new StatisticsCommand());
     }
 }

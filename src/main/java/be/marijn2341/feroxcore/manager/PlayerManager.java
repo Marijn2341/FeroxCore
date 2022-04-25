@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 public class PlayerManager {
 
-    private Main main = Main.getInstance();
+    private final Main main = Main.getInstance();
 
     public String getOnlineTime(Player player) {
 

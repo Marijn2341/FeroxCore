@@ -1,10 +1,8 @@
 package be.marijn2341.feroxcore.manager.inventorysettings.Listeners;
 
 import be.marijn2341.feroxcore.Main;
-import be.marijn2341.feroxcore.database.Database;
 import be.marijn2341.feroxcore.manager.inventorysettings.ItemStackSerializer;
 import be.marijn2341.feroxcore.utils.Utils;
-import be.marijn2341.feroxcore.utils.Gui;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -18,7 +16,7 @@ import java.util.ArrayList;
 
 public class InventoryClickListener implements Listener {
 
-    private Main main = Main.getInstance();
+    private final Main main = Main.getInstance();
 
     @EventHandler
     public void onClick(InventoryClickEvent e) {

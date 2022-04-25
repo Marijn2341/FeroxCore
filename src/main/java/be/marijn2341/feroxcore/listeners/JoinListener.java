@@ -1,11 +1,6 @@
 package be.marijn2341.feroxcore.listeners;
 
 import be.marijn2341.feroxcore.Main;
-import be.marijn2341.feroxcore.database.Database;
-import be.marijn2341.feroxcore.manager.DataManager;
-import be.marijn2341.feroxcore.manager.inventorysettings.ItemStackSerializer;
-import be.marijn2341.feroxcore.manager.MapManager;
-import be.marijn2341.feroxcore.manager.TeamManager;
 import be.marijn2341.feroxcore.utils.Utils;
 import com.nametagedit.plugin.NametagEdit;
 import org.bukkit.entity.Player;
@@ -16,7 +11,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class JoinListener implements Listener {
 
-    private Main main = Main.getInstance();
+    private final Main main = Main.getInstance();
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {

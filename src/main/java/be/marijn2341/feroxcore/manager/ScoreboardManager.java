@@ -1,7 +1,6 @@
 package be.marijn2341.feroxcore.manager;
 
 import be.marijn2341.feroxcore.Main;
-import be.marijn2341.feroxcore.database.Database;
 import be.marijn2341.feroxcore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -11,7 +10,7 @@ import org.bukkit.scoreboard.Scoreboard;
 
 public class ScoreboardManager {
 
-    private Main main = Main.getInstance();
+    private final Main main = Main.getInstance();
 
     public void getGameScoreboard(Player player) {
 
@@ -22,17 +21,17 @@ public class ScoreboardManager {
         obj.setDisplaySlot(DisplaySlot.SIDEBAR);
 
 
-            if (main.getDataManager().getRedNexusesLocTotal().size() >= 4) {
-                obj.getScore(Utils.color("&cRed:")).setScore(4);
-                obj.getScore(Utils.color("&7" + main.getDataManager().getRedNexusesLoc().size() + "&8/&7" + main.getDataManager().getRedNexusesLocTotal().size())).setScore(3);
-            }
-            if (main.getDataManager().getBlueNexusesLocTotal().size() >= 4) {
-                obj.getScore(Utils.color("&9Blue:")).setScore(6);
-                obj.getScore(Utils.color("&7" + main.getDataManager().getBlueNexusesLoc().size() + "&8/&7" + main.getDataManager().getBlueNexusesLocTotal().size())).setScore(5);
-            }
+        if (main.getDataManager().getRedNexusesLocTotal().size() >= 4) {
+            obj.getScore(Utils.color("&cRed:")).setScore(4);
+            obj.getScore(Utils.color("&7" + main.getDataManager().getRedNexusesLoc().size() + "&8/&7" + main.getDataManager().getRedNexusesLocTotal().size())).setScore(3);
+        }
+        if (main.getDataManager().getBlueNexusesLocTotal().size() >= 4) {
+            obj.getScore(Utils.color("&9Blue:")).setScore(6);
+            obj.getScore(Utils.color("&7" + main.getDataManager().getBlueNexusesLoc().size() + "&8/&7" + main.getDataManager().getBlueNexusesLocTotal().size())).setScore(5);
+        }
 
-            int i = 3;
-            int ib = 3;
+        int i = 3;
+        int ib = 3;
 
         if (main.getDataManager().getRedNexusesLocTotal().size() < 4 && main.getDataManager().getBlueNexusesLocTotal().size() < 4) {
             //SCOREBOARD DAT TEAM ROOD ZIET

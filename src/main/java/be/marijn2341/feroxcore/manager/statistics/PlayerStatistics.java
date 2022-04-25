@@ -1,14 +1,12 @@
 package be.marijn2341.feroxcore.manager.statistics;
 
 import be.marijn2341.feroxcore.Main;
-import be.marijn2341.feroxcore.database.Database;
-import be.marijn2341.feroxcore.manager.DataManager;
 
 import java.util.UUID;
 
 public class PlayerStatistics {
 
-    private Main main = Main.getInstance();
+    private final Main main = Main.getInstance();
 
     public void updateStats(UUID uuid) {
         int deaths = main.getDataManager().getDeaths().get(uuid);
@@ -21,6 +19,6 @@ public class PlayerStatistics {
         main.getDb().updateArrowsShotDB(uuid, shot);
 
         int hit = main.getDataManager().getArrowsHit().get(uuid);
-        main.getDb().updateArrowsHitDB(uuid,hit);
+        main.getDb().updateArrowsHitDB(uuid, hit);
     }
 }
