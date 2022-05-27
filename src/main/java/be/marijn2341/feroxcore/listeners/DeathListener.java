@@ -24,8 +24,8 @@ import java.util.List;
 public class DeathListener implements Listener {
 
     private final Main main = Main.getInstance();
-    LevelManager levelmanager = new LevelManager();
     private final int xp = 5;
+    LevelManager levelmanager = new LevelManager();
 
     @EventHandler
     public void ondeath(PlayerDeathEvent e) {

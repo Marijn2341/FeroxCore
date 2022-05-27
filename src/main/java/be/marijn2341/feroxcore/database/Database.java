@@ -1,8 +1,6 @@
 package be.marijn2341.feroxcore.database;
 
 import be.marijn2341.feroxcore.Main;
-import be.marijn2341.feroxcore.manager.DataManager;
-import be.marijn2341.feroxcore.manager.PlayerManager;
 import com.google.gson.Gson;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -10,19 +8,21 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.UUID;
 
 public class Database {
 
+    private static HikariDataSource dataSource;
     private String host;
     private String database;
     private String username;
     private String password;
     private int port;
-
-    private static HikariDataSource dataSource;
-    private Main main = Main.getInstance();
+    private final Main main = Main.getInstance();
 
     public void initialize() {
 
@@ -33,7 +33,7 @@ public class Database {
         password = Main.getInstance().getConfig().getString("MySQL.Password");
 
 
-        HikariConfig config = new HikariConfig();;
+        HikariConfig config = new HikariConfig();
         config.setJdbcUrl("jdbc:mysql://" + host + ":" + port + "/"
                 + database + "?autoReconnect=true");
         config.setUsername(username);
@@ -47,38 +47,37 @@ public class Database {
         Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "MySQL Connected");
     }
 
-    public HikariDataSource getHikari(){
+    public HikariDataSource getHikari() {
         return dataSource;
     }
 
 
-
     public void updateKillsDB(UUID uuid, int kills) {
-            try (Connection con = getHikari().getConnection();
-                 PreparedStatement ps = con.prepareStatement("UPDATE Stats SET kills = kills + ? WHERE uuid=?")) {
-                ps.setInt(1, kills);
-                ps.setString(2, uuid.toString());
-                ps.execute();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+        try (Connection con = getHikari().getConnection();
+             PreparedStatement ps = con.prepareStatement("UPDATE Stats SET kills = kills + ? WHERE uuid=?")) {
+            ps.setInt(1, kills);
+            ps.setString(2, uuid.toString());
+            ps.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+    }
 
-        public int getKillsDB(UUID uuid) {
-            int i = 0;
-            try (Connection con = getHikari().getConnection();
-                 PreparedStatement ps = con.prepareStatement("SELECT kills FROM Stats WHERE uuid=?")) {
-                ps.setString(1, uuid.toString());
-                ResultSet rs = ps.executeQuery();
-                if (rs.next()) {
-                    i = rs.getInt("kills");
-                }
-                rs.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
+    public int getKillsDB(UUID uuid) {
+        int i = 0;
+        try (Connection con = getHikari().getConnection();
+             PreparedStatement ps = con.prepareStatement("SELECT kills FROM Stats WHERE uuid=?")) {
+            ps.setString(1, uuid.toString());
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                i = rs.getInt("kills");
             }
-            return i;
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+        return i;
+    }
 
     public void updateDeathsDB(UUID uuid, int deaths) {
         try (Connection con = getHikari().getConnection();
@@ -108,25 +107,25 @@ public class Database {
     }
 
     public void setPlaytimeDB(UUID uuid) {
-            try (Connection con = getHikari().getConnection();
-                 PreparedStatement ps = con.prepareStatement("UPDATE Stats SET playtime=? WHERE uuid=?")) {
-                ps.setLong(1, main.getPlayerManager().getOnlineTimeMi(uuid));
-                ps.setString(2, uuid.toString());
-                ps.execute();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+        try (Connection con = getHikari().getConnection();
+             PreparedStatement ps = con.prepareStatement("UPDATE Stats SET playtime=? WHERE uuid=?")) {
+            ps.setLong(1, main.getPlayerManager().getOnlineTimeMi(uuid));
+            ps.setString(2, uuid.toString());
+            ps.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public void setBrokenNexuses(UUID uuid, int aantal) {
-            try (Connection con = getHikari().getConnection();
-                 PreparedStatement ps = con.prepareStatement("UPDATE Stats SET nexusesbroken = nexusesbroken + ? WHERE uuid=?")) {
-                ps.setInt(1, aantal);
-                ps.setString(2, uuid.toString());
-                ps.execute();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+        try (Connection con = getHikari().getConnection();
+             PreparedStatement ps = con.prepareStatement("UPDATE Stats SET nexusesbroken = nexusesbroken + ? WHERE uuid=?")) {
+            ps.setInt(1, aantal);
+            ps.setString(2, uuid.toString());
+            ps.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public int getBrokenNexuses(UUID uuid) {
@@ -200,28 +199,28 @@ public class Database {
     }
 
     public boolean checkIfUserExists(UUID uuid) {
-            try (Connection con = getHikari().getConnection();
-                 PreparedStatement ps = con.prepareStatement("SELECT * FROM Stats WHERE uuid=?")) {
-                ps.setString(1, uuid.toString());
-                ResultSet rs = ps.executeQuery();
-                if (rs.next()) {
-                    rs.close();
-                    return true;
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
+        try (Connection con = getHikari().getConnection();
+             PreparedStatement ps = con.prepareStatement("SELECT * FROM Stats WHERE uuid=?")) {
+            ps.setString(1, uuid.toString());
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                rs.close();
+                return true;
             }
-            return false;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     public void insertNewUser(UUID uuid) {
-            try (Connection con = getHikari().getConnection();
-                 PreparedStatement ps = con.prepareStatement("INSERT INTO Stats SET uuid=?")) {
-                ps.setString(1, uuid.toString());
-                ps.execute();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+        try (Connection con = getHikari().getConnection();
+             PreparedStatement ps = con.prepareStatement("INSERT INTO Stats SET uuid=?")) {
+            ps.setString(1, uuid.toString());
+            ps.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public void updateArrowsShotDB(UUID uuid, int shot) {
@@ -234,6 +233,7 @@ public class Database {
             e.printStackTrace();
         }
     }
+
     public void updateArrowsHitDB(UUID uuid, int hit) {
         try (Connection con = getHikari().getConnection();
              PreparedStatement ps = con.prepareStatement("UPDATE Stats SET arrowshit = arrowshit + ? WHERE uuid=?")) {
@@ -269,7 +269,7 @@ public class Database {
 
     public boolean inventoryPlayerExists(Player player) {
         try (Connection con = getHikari().getConnection();
-        PreparedStatement ps = con.prepareStatement("SELECT * FROM InventorySettings WHERE uuid=?")) {
+             PreparedStatement ps = con.prepareStatement("SELECT * FROM InventorySettings WHERE uuid=?")) {
             ps.setString(1, String.valueOf(player.getUniqueId()));
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -286,8 +286,8 @@ public class Database {
 
         String inv = null;
         try (Connection con = getHikari().getConnection();
-        PreparedStatement ps = con.prepareStatement("SELECT inventory FROM InventorySettings WHERE uuid=?")) {
-        ps.setString(1, String.valueOf(player.getUniqueId()));
+             PreparedStatement ps = con.prepareStatement("SELECT inventory FROM InventorySettings WHERE uuid=?")) {
+            ps.setString(1, String.valueOf(player.getUniqueId()));
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 inv = rs.getString("inventory");
@@ -301,7 +301,7 @@ public class Database {
 
     public void updateInventory(Player player, String obj) {
         try (Connection con = getHikari().getConnection();
-        PreparedStatement ps = con.prepareStatement("UPDATE InventorySettings SET inventory=? WHERE uuid=?")) {
+             PreparedStatement ps = con.prepareStatement("UPDATE InventorySettings SET inventory=? WHERE uuid=?")) {
             ps.setString(1, obj);
             ps.setString(2, String.valueOf(player.getUniqueId()));
             ps.execute();

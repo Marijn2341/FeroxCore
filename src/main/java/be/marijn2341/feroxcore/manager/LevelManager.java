@@ -9,9 +9,11 @@ import java.util.UUID;
 public class LevelManager {
 
     private final Main main = Main.getInstance();
+
     public int getPlayerLevel(UUID uuid) {
         return main.getDataManager().getLevel().get(uuid);
     }
+
     public void setPlayerLevel(UUID uuid, int level) {
         main.getDataManager().getLevel().put(uuid, level);
     }
@@ -19,6 +21,7 @@ public class LevelManager {
     public int getPlayerXP(UUID uuid) {
         return main.getDataManager().getXP().get(uuid);
     }
+
     public void setPlayerXP(UUID uuid, int xp) {
         main.getDataManager().getXP().put(uuid, xp);
     }
@@ -44,7 +47,7 @@ public class LevelManager {
         int current = getPlayerLevel(uuid);
         int level = current + 1;
         setPlayerLevel(uuid, level);
-        setPlayerXP(uuid,0);
+        setPlayerXP(uuid, 0);
         main.getDb().setLevel(uuid, level);
         main.getDb().setXP(uuid, 0);
         if (Bukkit.getOfflinePlayer(uuid).isOnline()) {

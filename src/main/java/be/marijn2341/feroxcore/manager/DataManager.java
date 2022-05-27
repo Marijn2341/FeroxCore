@@ -145,9 +145,13 @@ public class DataManager {
         return ARROWSSHOT;
     }
 
-    public HashMap<UUID, Integer> getLevel() { return LEVEL; }
+    public HashMap<UUID, Integer> getLevel() {
+        return LEVEL;
+    }
 
-    public HashMap<UUID, Integer> getXP() { return XP; }
+    public HashMap<UUID, Integer> getXP() {
+        return XP;
+    }
 
     public void clearLists() {
         getLosers().clear();

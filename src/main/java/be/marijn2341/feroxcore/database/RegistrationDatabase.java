@@ -10,7 +10,7 @@ import java.util.UUID;
 
 public class RegistrationDatabase {
 
-    private Main main = Main.getInstance();
+    private final Main main = Main.getInstance();
 
     public boolean playerExists(UUID uuid) {
         try (Connection con = main.getDb().getHikari().getConnection();
