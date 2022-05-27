@@ -181,6 +181,11 @@ public class MapManager {
 
                 GAMEACTIVE = false;
 
+                main.getDataManager().getSpectators().forEach(uuid -> {
+                    Player plr = Bukkit.getPlayer(uuid);
+                    teleportToSpawn(plr);
+                });
+
                 main.getDataManager().clearLists();
 
                 GAMESTARTEDAT = null;
