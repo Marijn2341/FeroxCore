@@ -320,4 +320,58 @@ public class Database {
             e.printStackTrace();
         }
     }
+
+    public void setLevel(UUID uuid, int level) {
+        try (Connection con = getHikari().getConnection();
+             PreparedStatement ps = con.prepareStatement("UPDATE Stats SET level=? WHERE uuid=?")) {
+            ps.setInt(1, level);
+            ps.setString(2, uuid.toString());
+            ps.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public int getLevel(UUID uuid) {
+        int i = 0;
+        try (Connection con = getHikari().getConnection();
+             PreparedStatement ps = con.prepareStatement("SELECT level FROM Stats WHERE uuid=?")) {
+            ps.setString(1, uuid.toString());
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                i = rs.getInt("level");
+            }
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return i;
+    }
+
+    public void setXP(UUID uuid, int xp) {
+        try (Connection con = getHikari().getConnection();
+             PreparedStatement ps = con.prepareStatement("UPDATE Stats SET xp=? WHERE uuid=?")) {
+            ps.setInt(1, xp);
+            ps.setString(2, uuid.toString());
+            ps.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public int getXP(UUID uuid) {
+        int i = 0;
+        try (Connection con = getHikari().getConnection();
+             PreparedStatement ps = con.prepareStatement("SELECT xp FROM Stats WHERE uuid=?")) {
+            ps.setString(1, uuid.toString());
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                i = rs.getInt("xp");
+            }
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return i;
+    }
 }

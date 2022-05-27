@@ -74,6 +74,12 @@ public class Main extends JavaPlugin {
         getConfig().addDefault("MySQL.Username", "user");
         getConfig().addDefault("MySQL.Password", "pass");
 
+        getConfig().addDefault("Ranks.Noob", 0);
+        getConfig().addDefault("Ranks.Beginner", 5);
+        getConfig().addDefault("Ranks.Pro", 20);
+        getConfig().addDefault("Ranks.Master", 30);
+        getConfig().addDefault("Ranks.God", 50);
+
         // DEFAULT CONFIG
         getConfig().options().copyDefaults(true);
         saveConfig();

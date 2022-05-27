@@ -11,6 +11,7 @@ import org.bukkit.scoreboard.Scoreboard;
 public class ScoreboardManager {
 
     private final Main main = Main.getInstance();
+    LevelManager levelmanager = new LevelManager();
 
     public void getGameScoreboard(Player player) {
 
@@ -128,11 +129,12 @@ public class ScoreboardManager {
         obj.setDisplayName(Utils.color("&9&lFerox&f&lMC"));
         obj.setDisplaySlot(DisplaySlot.SIDEBAR);
 
-        obj.getScore(" ").setScore(7);
-        obj.getScore(Utils.color("&9Player: &f" + player.getName())).setScore(6);
-        obj.getScore(Utils.color("&9Kills: &f" + main.getDb().getKillsDB(player.getUniqueId()))).setScore(5);
-        obj.getScore(Utils.color("&9Deaths: &f") + main.getDb().getDeathsDB(player.getUniqueId())).setScore(4);
-        obj.getScore(Utils.color("&9Playtime: &f" + main.getPlayerManager().getOnlineTime(player))).setScore(3);
+        obj.getScore(" ").setScore(8);
+        obj.getScore(Utils.color("&9Player: &f" + player.getName())).setScore(7);
+        obj.getScore(Utils.color("&9Kills: &f" + main.getDb().getKillsDB(player.getUniqueId()))).setScore(6);
+        obj.getScore(Utils.color("&9Deaths: &f") + main.getDb().getDeathsDB(player.getUniqueId())).setScore(5);
+        obj.getScore(Utils.color("&9Playtime: &f" + main.getPlayerManager().getOnlineTime(player))).setScore(4);
+        obj.getScore(Utils.color("&9Level: &f" + levelmanager.getPlayerLevel(player.getUniqueId()))).setScore(3);
         obj.getScore("").setScore(2);
         obj.getScore(Utils.color("&7pvp.feroxhosting.nl")).setScore(1);
 

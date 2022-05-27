@@ -41,6 +41,9 @@ public class DataManager {
     private final HashMap<UUID, Integer> ARROWSHIT = new HashMap<>();
     private final HashMap<UUID, Integer> ARROWSSHOT = new HashMap<>();
 
+    private final HashMap<UUID, Integer> LEVEL = new HashMap<>();
+    private final HashMap<UUID, Integer> XP = new HashMap<>();
+
     public ArrayList<UUID> getTeamRed() {
         return TEAMRED;
     }
@@ -141,6 +144,10 @@ public class DataManager {
     public HashMap<UUID, Integer> getArrowsShot() {
         return ARROWSSHOT;
     }
+
+    public HashMap<UUID, Integer> getLevel() { return LEVEL; }
+
+    public HashMap<UUID, Integer> getXP() { return XP; }
 
     public void clearLists() {
         getLosers().clear();

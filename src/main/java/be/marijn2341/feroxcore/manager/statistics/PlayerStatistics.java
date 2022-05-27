@@ -1,6 +1,8 @@
 package be.marijn2341.feroxcore.manager.statistics;
 
 import be.marijn2341.feroxcore.Main;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
@@ -20,5 +22,8 @@ public class PlayerStatistics {
 
         int hit = main.getDataManager().getArrowsHit().get(uuid);
         main.getDb().updateArrowsHitDB(uuid, hit);
+
+        Player plr = Bukkit.getPlayer(uuid);
+        Bukkit.getLogger().info("De statistics van " + plr.getName() + " zijn geupdated!");
     }
 }

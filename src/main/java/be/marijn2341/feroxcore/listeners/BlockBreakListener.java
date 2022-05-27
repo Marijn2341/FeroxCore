@@ -1,6 +1,7 @@
 package be.marijn2341.feroxcore.listeners;
 
 import be.marijn2341.feroxcore.Main;
+import be.marijn2341.feroxcore.manager.LevelManager;
 import be.marijn2341.feroxcore.manager.ScoreboardManager;
 import be.marijn2341.feroxcore.utils.Utils;
 import org.bukkit.Bukkit;
@@ -16,6 +17,7 @@ import java.util.UUID;
 public class BlockBreakListener implements Listener {
 
     private final Main main = Main.getInstance();
+    LevelManager levelmanager = new LevelManager();
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent e) {
@@ -46,6 +48,7 @@ public class BlockBreakListener implements Listener {
                     e.getBlock().setType(Material.AIR);
                     main.getDataManager().getBlueNexusesLoc().remove(key);
                     Bukkit.broadcastMessage(Utils.color("&c&l" + player.getName() + " &7has broken a &9&lblue &7nexus."));
+                    levelmanager.addPlayerXP(player.getUniqueId(), 15);
                     main.getDb().setBrokenNexuses(player.getUniqueId(), 1);
                     sbmanager.updateScoreboardINGAME();
 
@@ -75,6 +78,7 @@ public class BlockBreakListener implements Listener {
                     e.getBlock().setType(Material.AIR);
                     main.getDataManager().getRedNexusesLoc().remove(key);
                     Bukkit.broadcastMessage(Utils.color("&9&l" + player.getName() + " &7has broken a &c&lred &7nexus."));
+                    levelmanager.addPlayerXP(player.getUniqueId(), 15);
                     main.getDb().setBrokenNexuses(player.getUniqueId(), 1);
                     sbmanager.updateScoreboardINGAME();
 

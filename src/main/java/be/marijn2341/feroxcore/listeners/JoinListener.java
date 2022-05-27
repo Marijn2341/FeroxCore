@@ -33,6 +33,13 @@ public class JoinListener implements Listener {
             main.getDb().setInventory(player, inv);
         }
 
+        if (main.getDb().getLevel(player.getUniqueId()) == 0) {
+            main.getDb().setLevel(player.getUniqueId(), 1);
+        }
+
+        main.getDataManager().getLevel().put(player.getUniqueId(), main.getDb().getLevel(player.getUniqueId()));
+        main.getDataManager().getXP().put(player.getUniqueId(), main.getDb().getXP(player.getUniqueId()));
+
         // TELEPORT PLAYER TO SPAWN
         main.getMapManager().teleportToSpawn(player);
         player.sendMessage(Utils.color("&9--- &9&lFerox&f&lMC &9---"));

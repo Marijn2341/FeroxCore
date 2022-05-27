@@ -1,8 +1,10 @@
 package be.marijn2341.feroxcore.listeners;
 
 import be.marijn2341.feroxcore.Main;
+import be.marijn2341.feroxcore.manager.LevelManager;
 import be.marijn2341.feroxcore.utils.Utils;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -22,6 +24,8 @@ import java.util.List;
 public class DeathListener implements Listener {
 
     private final Main main = Main.getInstance();
+    LevelManager levelmanager = new LevelManager();
+    private final int xp = 5;
 
     @EventHandler
     public void ondeath(PlayerDeathEvent e) {
@@ -91,6 +95,8 @@ public class DeathListener implements Listener {
                             "&7."));
                     // ADD KILL TO KILLER
                     main.getDataManager().getKills().put(killer.getUniqueId(), main.getDataManager().getKills().get(killer.getUniqueId()) + 1);
+                    levelmanager.addPlayerXP(killer.getUniqueId(), xp);
+                    killer.playSound(killer.getLocation(), Sound.NOTE_PLING, 3.0F, 3.0F);
                     // REMOVE PLAYER FROM HASHMAP
                     main.getDataManager().getLastDamager().remove(deathplayer);
                     return;
@@ -115,6 +121,8 @@ public class DeathListener implements Listener {
                         "&7."));
                 // ADD KILL TO KILLER
                 main.getDataManager().getKills().put(killer.getUniqueId(), main.getDataManager().getKills().get(killer.getUniqueId()) + 1);
+                levelmanager.addPlayerXP(killer.getUniqueId(), xp);
+                killer.playSound(killer.getLocation(), Sound.NOTE_PLING, 3.0F, 3.0F);
                 // REMOVE PLAYER FROM HASHMAP
                 main.getDataManager().getLastDamager().remove(deathplayer);
                 return;
@@ -140,6 +148,8 @@ public class DeathListener implements Listener {
                             "&7."));
                     // ADD KILL TO KILLER
                     main.getDataManager().getKills().put(killer.getUniqueId(), main.getDataManager().getKills().get(killer.getUniqueId()) + 1);
+                    levelmanager.addPlayerXP(killer.getUniqueId(), xp);
+                    killer.playSound(killer.getLocation(), Sound.NOTE_PLING, 3.0F, 3.0F);
                     // REMOVE PLAYER FROM HASHMAP
                     main.getDataManager().getLastDamager().remove(deathplayer);
                     return;
@@ -164,6 +174,8 @@ public class DeathListener implements Listener {
                         e.setDeathMessage(Utils.color("&" + main.getTeamManager().GetTeamColor(deathplayer) + deathplayer.getName() + " &7got shot by &" +
                                 main.getTeamManager().GetTeamColor(shooter) + shooter.getName() + "&7."));
                         main.getDataManager().getKills().put(shooter.getUniqueId(), main.getDataManager().getKills().get(shooter.getUniqueId()) + 1);
+                        levelmanager.addPlayerXP(shooter.getUniqueId(), xp);
+                        shooter.playSound(shooter.getLocation(), Sound.NOTE_PLING, 3.0F, 3.0F);
                         return;
                     }
                 }
@@ -180,6 +192,8 @@ public class DeathListener implements Listener {
                 e.setDeathMessage(Utils.color("&" + main.getTeamManager().GetTeamColor(deathplayer) + deathplayer.getName() + " &7got killed by &" + main.getTeamManager().GetTeamColor(killer) + killer.getName() + "&7."));
                 // ADD KILL TO KILLER
                 main.getDataManager().getKills().put(killer.getUniqueId(), main.getDataManager().getKills().get(killer.getUniqueId()) + 1);
+                levelmanager.addPlayerXP(killer.getUniqueId(), xp);
+                killer.playSound(killer.getLocation(), Sound.NOTE_PLING, 3.0F, 3.0F);
 
                 main.getDataManager().getLastDamager().remove(deathplayer);
                 return;

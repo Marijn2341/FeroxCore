@@ -2,6 +2,7 @@ package be.marijn2341.feroxcore.listeners;
 
 import be.marijn2341.feroxcore.Main;
 import be.marijn2341.feroxcore.commands.staff.SetupCommand;
+import be.marijn2341.feroxcore.manager.LevelManager;
 import be.marijn2341.feroxcore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -12,6 +13,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 public class QuitListener implements Listener {
 
     private final Main main = Main.getInstance();
+    LevelManager levelmanager = new LevelManager();
 
     @EventHandler
     public void PlayerQuit(PlayerQuitEvent e) {
@@ -43,5 +45,8 @@ public class QuitListener implements Listener {
         }
 
         main.getDb().setPlaytimeDB(player.getUniqueId());
+
+        main.getDb().setLevel(player.getUniqueId(), levelmanager.getPlayerLevel(player.getUniqueId()));
+        main.getDb().setXP(player.getUniqueId(), levelmanager.getPlayerXP(player.getUniqueId()));
     }
 }

@@ -219,10 +219,12 @@ public class ItemStacks {
         int nexusesbroken = main.getDb().getBrokenNexuses(player.getUniqueId());
         int wins = main.getDb().getWins(player.getUniqueId());
         int loses = main.getDb().getLoses(player.getUniqueId());
+        int level = main.getDataManager().getLevel().get(player.getUniqueId());
         String time = main.getPlayerManager().getOnlineTime(player);
 
 
         ArrayList<String> lore = new ArrayList<>();
+        lore.add(Utils.color("&7Level: &f" + level));
         lore.add(Utils.color("&7Kills: &f" + kills));
         lore.add(Utils.color("&7Deaths: &f" + deaths));
         lore.add(Utils.color("&7Wins: &f" + wins));
